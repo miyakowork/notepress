@@ -262,7 +262,7 @@ public class NotePressLoginController extends NotePressBaseController {
                             SESSION_MAPPER.insert(SysSession.user(sessionUser));
                         }
                         removeSessionLastVisitUrl();
-                        httpResponse.sendRedirect(URLUtil.decode(Base64Decoder.decodeStr(lastVisitUrl)));
+                        httpResponse.sendRedirect(lastVisitUrl);
                     }
                     //如果没绑定，提示绑定并转发至绑定页面
                     else {
@@ -271,6 +271,7 @@ public class NotePressLoginController extends NotePressBaseController {
                         String uuid = authUser.getUuid();
                         String nickname = authUser.getNickname();
                         String email = authUser.getEmail();
+                        String username = authUser.getUsername();
                         log.info("==> 授权用户：{}", JSONUtil.toJsonPrettyStr(authUser));
                         Map<String, Object> pMap = new HashMap<>(3);
                         pMap.put("avatar", avatar);
@@ -278,7 +279,7 @@ public class NotePressLoginController extends NotePressBaseController {
                         pMap.put("uuid", uuid);
                         pMap.put("nickname", nickname);
                         pMap.put("email", email);
-                        pMap.put("username", authUser.getUsername());
+                        pMap.put("username", username);
                         httpResponse.sendRedirect("/np-bind?p=" + Base64.encode(JSONUtil.toJsonStr(pMap)));
                     }
                 } else {
@@ -320,7 +321,7 @@ public class NotePressLoginController extends NotePressBaseController {
         SysUser reqUser = SysUser.builder()
                 .username(username).email(email)
                 .password(password).nickname(nickname)
-                .avatar(avatar).build();
+                .avatar(avatar.replace("http://", "https://")).build();
         NotePressResult notePressResult = sysUserService.doReg(reqUser);
         if (!notePressResult.isSuccess()) {
             return notePressResult;
