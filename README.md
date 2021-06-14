@@ -1,7 +1,7 @@
 # LICENSE
 > 基于 GPLv3 ，详情请查看：[百度百科：GPL协议](https://baike.baidu.com/item/GNU%E9%80%9A%E7%94%A8%E5%85%AC%E5%85%B1%E8%AE%B8%E5%8F%AF%E8%AF%81/393832?fromtitle=GPL%E5%8D%8F%E8%AE%AE&fromid=8274607&fr=aladdin)
 
-- 此项目仅包含后端服务和博客前端，后台管理前端项目：请前往 [部署教程页面](https://wuwenbin.me/deployDoc) 获取
+- 此项目仅包含后端服务和博客前端，后台管理前端项目：请前往 [部署教程页面](https://wuwenbin.me/content/u/deployDoc) 获取
 
 # 简介
 > - 本项目基于之前我的 [noteblogv5](https://github.com/miyakowork/noteblogv5) 深度定制&升级&重构而来，经过代码重构一些处理逻辑和主题包升级等。<br/>
