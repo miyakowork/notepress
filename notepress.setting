@@ -1,0 +1,38 @@
+#jwt验证相关，关系到后台管理，请自行替换成自己的
+[jwt]
+#jwt签发主题，请自行替换
+name = j5b220m8j8ga
+#clientId，客户端id，请自行替换
+clientId = 549d9fbe61b34014af19b154173e0d3a
+#base64加密过的秘钥，请自行替换
+base64Secret = NTQ5ZDlmYmU2MWIzNDAxNGFmMTliMTU0MTczZTBkM2E=
+# AES加密密钥（16位），请自行替换
+aesKey = n07dsetvtnlzz821
+
+#==========数据库相关设置============
+[db]
+#数据库端口
+ip =
+#数据库端口
+port =
+#数据库名
+name = notepress
+#数据库账号
+user =
+#数据库密码
+pass =
+#是否开启 ssl 连接
+useSSL = false
+#如配置 jdbcUrl 属性，则以上 db 配置无效
+jdbcUrl =
+
+#=============项目相关配置============
+[app]
+#启动程序时是否初始化数据库，此项为重新安装使用，切勿随意更改
+startInit = true
+#文件上传绝对路径,默认是在jar的同级目录下的upload文件夹下
+uploadPath = file:///D:/notepress/upload/
+#页面模板存放路径文件夹（此处配置的为绝对路径，以 / 结尾）
+themesPath = D:/WebstormProjects/themes/
+#启动端口号
+serverPort = 8086

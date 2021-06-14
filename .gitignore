@@ -1,0 +1,12 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+notepress-core/src/main/java/me/wuwenbin/notepress/core/.DS_Store
+notepress-core/src/main/java/me/wuwenbin/notepress/core/constants/.DS_Store
+!/.idea/

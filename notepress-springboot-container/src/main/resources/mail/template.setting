@@ -1,0 +1,6 @@
+#发送邮箱验证码的邮件内容模板
+template_mail_code = 您的验证码为<b>【{mailCode}】</b>，10分钟内有效。
+#发送评论通知的消息邮件模版内容
+template_notice = <p> 你的网站<span style='color:red;font-weight:bolder;'>【{}】 </span> 有人发表了新留言：</p> <p style='font-style:italic;'>{}</p> <p>，请<a href='{}{}' target='_blank'>查看</a></p>
+#提醒用户新消息
+template_user_notice = <p>你的评论有新回复，详细请<a href='{}content/{}' target='_blank'>查看</a></p>

@@ -1,0 +1,69 @@
+[-1]
+system_started_datetime = 系统最近一次的启动时间
+system_init_datetime = 系统初始化时间
+system_init_status = 系统初始化状态：0->未初始化，1->已初始化,0
+system_operation_datetime = 网站运营开始时间，在网站的顶部显示的统计开始时间节点
+
+
+[0]
+#上传类型/文件格式
+upload_type = 上传方式类型（七牛或本地），默认本地local，本地上传,local
+upload_exts = 上传文件允许的格式，默认所有图片格式,jpg|png|jpeg|bmp|gif|svg|
+upload_max_size = 上传文件最大限制（默认最大不超过100MB）,10240
+
+#邮件服务配置
+mail_smpt_server_addr = SMTP服务器
+mail_smpt_server_port = SMTP端口号
+mail_server_account = 发件人邮箱
+mail_sender_name = 发件人邮箱帐号（一般为@前面部分）
+mail_server_password = 邮箱登入密码
+
+#统计类型
+statistics_method = 统计方式，默认pv/ip同时开启,
+
+#七牛云相关设置
+qiniu_accessKey = 七牛AccessKey,
+qiniu_secretKey = 七牛SecretKey,
+qiniu_bucket = 七牛bucket,
+qiniu_domain = 七牛域名,
+
+
+[1]
+#启用主题（此配置影响后台管理菜单的配置）
+theme_name = 默认主题,def
+#每页内容显示的数量
+content_page_size = 内容页面大小,14
+
+seo_keywords = meta关键词，全局seo 关键字,
+seo_description = meta描述，全局seo 描述,
+footer_copyright = 前台页面页脚的文字备注，html 文本,
+
+website_name = 网站名称,NotePress,
+website_subtitle = 网站副标题,一款简美的CMS,
+website_logo_small = 网站logo图片（小，正方形 x*x）,/static/assets/img/notepress-sm.png
+website_logo_large = 网站logo图片（大，矩形 x*y）,/static/assets/img/notepress-lg.png
+website_logo_fonticon = 网站字体图标（使用font awesome）,
+website_info_label = 网站/站长简介,
+website_domain = 前台主站url,
+
+admin_global_nickname = 站长/管理员的的昵称,
+admin_global_avatar = 站长/管理员的头像,
+admin_qrcode_alipay = 支付宝二维码,/static/assets/img/noqrcode.jpg
+admin_qrcode_wechat = 微信支付二维码,/static/assets/img/noqrcode.jpg
+
+recharge_server_domain = 充值服务的域名/ip地址,
+recharge_sign_secretKey = 校对密钥，需要和充值微服务端那边设置的一样，没有请忽略,
+recharge_rate = 充值兑换比率，默认1:10,10
+
+
+[2]
+#一些开关设置，0表示不开启，1表示开启
+switch_upload = 是否开放前端主站上传功能,0
+switch_comment = 是否开放全站评论,0
+switch_comment_notice_mail = 是否开启评论通知邮件,0
+switch_user_reg = 是否开放用户注册,0
+switch_visit_log = 是否开启访问统计,0
+switch_qq_login = 是否开启第三方QQ登录,0
+switch_github_login = 是否开启第三方Github登录,0
+switch_recharge_server = 是否开启自动充值服务,0
+switch_homepage_index = 是否直接进入index首页而不是卡片欢迎页,0

@@ -1,0 +1,46 @@
+#server相关配置
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    remote-ip-header: X-Real-IP
+    protocol-header: X-Forwarded-Proto
+  use-forward-headers: true
+#jwt相关配置
+jwt:
+  #过期时间，单位毫秒，2小时
+  expiresMillSecond: 7200000
+#mybatis相关配置
+mybatis-plus:
+  global-config:
+    db-config:
+      table-prefix: np_
+      id-type: auto
+  mapper-locations: classpath:/mappers/*.xml
+  type-enums-package: me.wuwenbin.notepress.api.constants.enums
+  configuration:
+    default-enum-type-handler: com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler
+logging:
+  level:
+    me.wuwenbin.notepress.service.mapper: DEBUG
+
+#spring相关配置
+spring:
+  application:
+    name: NotePress
+  profiles:
+    active: notepress
+  http:
+    encoding:
+      force: true
+      enabled: true
+      charset: UTF-8
+  servlet:
+    multipart:
+      max-file-size: 20MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  cache:
+    type: ehcache
+    ehcache:
+      config: ehcache/ehcache.xml
