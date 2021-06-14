@@ -14,6 +14,7 @@ import cn.hutool.json.JSONUtil;
 import com.google.code.kaptcha.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import me.wuwenbin.notepress.api.constants.CacheConstant;
 import me.wuwenbin.notepress.api.constants.NotePressConstants;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
@@ -63,6 +64,7 @@ import java.util.Map;
  *
  * @author wuwenbin
  */
+@Slf4j
 @Controller
 @RequestMapping
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
@@ -138,10 +140,16 @@ public class NotePressLoginController extends NotePressBaseController {
         String source = MapUtil.getStr(pMap, "source");
         String uuid = MapUtil.getStr(pMap, "uuid");
         String avatar = MapUtil.getStr(pMap, "avatar");
+        String email = MapUtil.getStr(pMap, "email");
+        String nickname = MapUtil.getStr(pMap, "nickname");
+        String username = MapUtil.getStr(pMap, "username");
         mav.addObject("isOpenRegister", isOpenRegister());
         mav.addObject("source", source);
         mav.addObject("uuid", uuid);
         mav.addObject("avatar", avatar);
+        mav.addObject("email", email);
+        mav.addObject("nickname", nickname);
+        mav.addObject("username", username);
         return mav;
     }
 
@@ -261,10 +269,16 @@ public class NotePressLoginController extends NotePressBaseController {
                         String avatar = authUser.getAvatar();
                         String source = authUser.getSource();
                         String uuid = authUser.getUuid();
+                        String nickname = authUser.getNickname();
+                        String email = authUser.getEmail();
+                        log.info("==> 授权用户：{}", JSONUtil.toJsonPrettyStr(authUser));
                         Map<String, Object> pMap = new HashMap<>(3);
                         pMap.put("avatar", avatar);
                         pMap.put("source", source);
                         pMap.put("uuid", uuid);
+                        pMap.put("nickname", nickname);
+                        pMap.put("email", email);
+                        pMap.put("username", authUser.getUsername());
                         httpResponse.sendRedirect("/np-bind?p=" + Base64.encode(JSONUtil.toJsonStr(pMap)));
                     }
                 } else {
@@ -290,7 +304,7 @@ public class NotePressLoginController extends NotePressBaseController {
      */
     @PostMapping("/bind")
     @ResponseBody
-    public NotePressResult bind(String username, String password,
+    public NotePressResult bind(String username, String password, String nickname, String email,
                                 String source, String uuid, String avatar, @RequestParam String code) {
         String googleCode = kaptchaCodeCache.get(Constants.KAPTCHA_SESSION_KEY);
         kaptchaCodeCache.clear();
@@ -300,24 +314,37 @@ public class NotePressLoginController extends NotePressBaseController {
         if (!code.equalsIgnoreCase(googleCode)) {
             return NotePressResult.createErrorMsg("验证码不匹配，请刷新页面后重试！");
         }
-        //检测用户名和密码是否正确
-        NotePressResult loginResult = sysUserService.doLogin(username, password, NotePressIpUtils.getRemoteAddress(request));
-        if (loginResult.isSuccess()) {
+        if (ReUtil.isMatch("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？ ]", username)) {
+            return writeJsonErrorMsg("用户名不能包含特殊字符！");
+        }
+        SysUser reqUser = SysUser.builder()
+                .username(username).email(email)
+                .password(password).nickname(nickname)
+                .avatar(avatar).build();
+        NotePressResult notePressResult = sysUserService.doReg(reqUser);
+        if (!notePressResult.isSuccess()) {
+            return notePressResult;
+        } else {
+            //能到绑定页面的说明都是没有注册过的
+            //检测用户名和密码是否正确
+            NotePressResult loginResult = sysUserService.doLogin(username, password, NotePressIpUtils.getRemoteAddress(request));
+            if (!loginResult.isSuccess()) {
+                return loginResult;
+            }
             Long userId = loginResult.getDataBean(SysUser.class).getId();
             //开始执行绑定
             NotePressResult isSavedR = referService.bind(userId, uuid, source, HtmlUtil.unescape(HtmlUtil.unescape(avatar)));
-            if (isSavedR.isSuccess()) {
+            if (!isSavedR.isSuccess()) {
+                return NotePressResult.createErrorFormatMsg("绑定失败：{}", isSavedR.getMsg());
+            } else {
                 //绑定成功跳转至登录前的最后访问的页面
                 Object lastVisitUrl = session.getAttribute(SESSION_LAST_VISIT_URL_KEY);
                 removeSessionLastVisitUrl();
                 return NotePressResult.createOkMsg("绑定成功")
                         .addExtra("url",
                                 URLUtil.decode(ObjectUtil.isNotEmpty(lastVisitUrl) ? URLUtil.decode(Base64Decoder.decodeStr(lastVisitUrl.toString())) : "/"));
-            } else {
-                return NotePressResult.createErrorFormatMsg("绑定失败：{}", isSavedR.getMsg());
             }
         }
-        return loginResult;
     }
 
 
@@ -347,9 +374,11 @@ public class NotePressLoginController extends NotePressBaseController {
         if (qqR.isSuccess()) {
             if ("qq".contentEquals(type)) {
                 Param qqParam = paramService.getOne(ParamQuery.build(ParamKeyConstant.SWITCH_QQ_LOGIN));
+                log.info("==> qq login open status:" + JSONUtil.toJsonStr(qqParam));
                 return qqParam != null && "1".contentEquals(qqParam.getValue());
             } else if ("github".contentEquals(type)) {
                 Param githubParam = paramService.getOne(ParamQuery.build(ParamKeyConstant.SWITCH_GITHUB_LOGIN));
+                log.info("==> github login open status:" + JSONUtil.toJsonStr(githubParam));
                 return githubParam != null && "1".contentEquals(githubParam.getValue());
             }
         }

@@ -21,7 +21,7 @@
     </modules>
     <packaging>pom</packaging>
 
-    <name>notepress-starter-app</name>
+    <name>notepress-app</name>
     <description>NotePress 内容平台</description>
     <url>https://gitee.com/miyakowork/notepress</url>
 
