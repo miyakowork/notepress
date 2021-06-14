@@ -4,10 +4,10 @@
 - 此项目仅包含后端服务和博客前端，后台管理前端项目：请前往 [部署教程页面](https://wuwenbin.me/content/u/deployDoc) 获取
 
 # 简介
-> - 本项目基于之前我的 [noteblogv5](https://github.com/miyakowork/noteblogv5) 深度定制&升级&重构而来，经过代码重构一些处理逻辑和主题包升级等。<br/>
+> - 本项目基于之前我的 noteblogv5 深度定制&升级&重构而来，经过代码重构一些处理逻辑和主题包升级等。<br/>
 > - 所有UI组件（文章卡片等）全部都是基于Layui构建的。<br/>
 > - NotePress是一款基于layui的响应式的个人/博客建站系统，简洁美观功能强大 <br/>
-> - 点击链接加入群聊，获取更多信息【[NotePress ~ 交流反馈：697053454](https://jq.qq.com/?_wv=1027&k=5ZEGGl8) 】。<br/>
+> - 点击链接加入群聊，获取更多信息【[NotePress ~ 交流反馈：697053454](https://jq.qq.com/?_wv=1027&k=5ZEGGl8) 】。<br/>
 > - 官网&文档&博客：<a href="http://wuwenbin.me" target="_blank"> 点我查看</a>
 
 # 功能特色
