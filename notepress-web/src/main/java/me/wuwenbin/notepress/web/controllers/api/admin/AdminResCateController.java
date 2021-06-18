@@ -1,12 +1,9 @@
 package me.wuwenbin.notepress.web.controllers.api.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
-import me.wuwenbin.notepress.api.model.entity.Category;
 import me.wuwenbin.notepress.api.model.entity.ResCate;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
-import me.wuwenbin.notepress.api.service.ICategoryService;
 import me.wuwenbin.notepress.api.service.IResCateService;
 import me.wuwenbin.notepress.service.utils.NotePressSessionUtils;
 import me.wuwenbin.notepress.web.controllers.api.NotePressBaseController;
@@ -27,10 +24,10 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/admin/rescate")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminResCateController extends NotePressBaseController {
 
-    private final IResCateService categoryService;
+    @Autowired
+    private IResCateService categoryService;
 
     @PostMapping
     public NotePressResult resCateList(Page<ResCate> categoryPage,

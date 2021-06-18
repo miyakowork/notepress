@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.web.controllers.api.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Upload;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
@@ -18,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/admin/upload")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminUploadController extends NotePressBaseController {
 
-    private final IUploadService uploadService;
+    @Autowired
+    private IUploadService uploadService;
 
     @PostMapping("/imgList")
     public NotePressResult uploadImgList(Page<Upload> uploadImagePage, @RequestBody LayuiTableQuery<Upload> layuiTableQuery) {

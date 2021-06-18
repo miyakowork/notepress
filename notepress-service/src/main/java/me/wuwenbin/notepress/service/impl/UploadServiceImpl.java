@@ -17,7 +17,6 @@ import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.constants.UploadConstant;
@@ -60,13 +59,95 @@ import java.util.Map;
 @Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class UploadServiceImpl extends ServiceImpl<UploadMapper, Upload> implements IUploadService {
 
-    private final UploadMapper uploadMapper;
+    @Autowired
+    private UploadMapper uploadMapper;
     @Qualifier("notePressSetting")
-    private final Setting notePressSetting;
-    private final ParamMapper paramMapper;
+    @Autowired
+    private Setting notePressSetting;
+    @Autowired
+    private ParamMapper paramMapper;
+
+    /**
+     * 根据上传的额外参数以及生成的参数生成新的upload对象插入数据库中
+     *
+     * @param uploadParam
+     * @param uploadFilePath
+     * @param virtualPath
+     * @param contentType
+     * @return
+     */
+    private static Upload newUpload(Map<String, Object> uploadParam, String uploadFilePath, String virtualPath, String contentType) {
+        Integer uploadTypeCode = MapUtil.getInt(uploadParam, UploadConstant.REQUEST_PARAM_CODE);
+        if (uploadTypeCode == null) {
+            throw new NotePressException(NotePressErrorCode.RequestError, "上传参数 code 不能为空！");
+        }
+        UploadTypeEnum uploadTypeEnum = UploadTypeEnum.parseCodeToEnumType(uploadTypeCode);
+        //当前上传文件的用户ID
+        Long userId = MapUtil.getLong(uploadParam, UploadConstant.REQUEST_PARAM_USER_ID);
+        //业务id，如果在内容内上传那就是内容的ID，可以为空
+        String objectKeyId = MapUtil.getStr(uploadParam, UploadConstant.REQUEST_PARAM_OBJECT_KEY_ID);
+        //上传的一些说明
+        String remark = MapUtil.getStr(uploadParam, UploadConstant.REQUEST_PARAM_REMARK);
+        if (StringUtils.isEmpty(remark)) {
+            remark = uploadTypeEnum.getDesc();
+        }
+        //插入到数据库中
+        return Upload.builder()
+                .diskPath(uploadFilePath).virtualPath(virtualPath).upload(LocalDateTime.now())
+                .type(uploadTypeEnum).userId(userId).objectKeyId(objectKeyId).contentType(contentType).build()
+                .createBy(userId).gmtCreate(LocalDateTime.now()).remark(remark);
+    }
+
+    /**
+     * 统一处理返回结果
+     *
+     * @param ur
+     * @param reqType
+     * @param virtualPath
+     * @return
+     */
+    private static NotePressResult result(int ur, String reqType, String virtualPath) {
+        final LayUploader layUploader = NotePressUtils.getBean(LayUploader.class);
+        final NkUploader nkUploader = NotePressUtils.getBean(NkUploader.class);
+        final MdUploader mdUploader = NotePressUtils.getBean(MdUploader.class);
+        //如果是使用layui的组件上传
+        if (UploadConstant.UPLOAD_TYPE_LAY.equalsIgnoreCase(reqType)) {
+            if (ur == 1) {
+                return NotePressResult.createOkData(layUploader.ok("上传成功！", virtualPath));
+            } else {
+                return NotePressResult.createOkData(layUploader.err("上传失败！"));
+            }
+        }
+        //nkeditor或者kindeditor组件上传
+        else if (UploadConstant.UPLOAD_TYPE_NK.equalsIgnoreCase(reqType)) {
+            if (ur == 1) {
+                return NotePressResult.createOkData(nkUploader.ok("上传成功！", virtualPath));
+            } else {
+                return NotePressResult.createOkData(nkUploader.err("上传失败！"));
+            }
+        }
+        //editorMD组件上传
+        else if (UploadConstant.UPLOAD_TYPE_MD.equalsIgnoreCase(reqType)) {
+            if (ur == 1) {
+                return NotePressResult.createOkData(mdUploader.ok("上传成功！", virtualPath));
+            } else {
+                return NotePressResult.createOkData(mdUploader.err("上传失败！"));
+            }
+        }
+        //其他组件上传
+        else {
+            if (ur == 1) {
+                return NotePressResult.createOk("上传成功！", virtualPath);
+            } else {
+                return NotePressResult.createErrorMsg("上传失败！");
+            }
+        }
+    }
+
+
+    //======================上传的一些私有方法=================
 
     /**
      * 上传方法
@@ -131,8 +212,7 @@ public class UploadServiceImpl extends ServiceImpl<UploadMapper, Upload> impleme
         });
     }
 
-
-    //======================上传的一些私有方法=================
+    //=============================静态私有方法=======================
 
     /**
      * 本地上传方法，生成upload对象
@@ -209,85 +289,6 @@ public class UploadServiceImpl extends ServiceImpl<UploadMapper, Upload> impleme
         } catch (Exception ex) {
             log.error("==> 文件IO读取异常，异常信息：{}", ex.getMessage());
             throw new NotePressException(NotePressErrorCode.InternalServerError, ex.getMessage());
-        }
-    }
-
-    //=============================静态私有方法=======================
-
-    /**
-     * 根据上传的额外参数以及生成的参数生成新的upload对象插入数据库中
-     *
-     * @param uploadParam
-     * @param uploadFilePath
-     * @param virtualPath
-     * @param contentType
-     * @return
-     */
-    private static Upload newUpload(Map<String, Object> uploadParam, String uploadFilePath, String virtualPath, String contentType) {
-        Integer uploadTypeCode = MapUtil.getInt(uploadParam, UploadConstant.REQUEST_PARAM_CODE);
-        if (uploadTypeCode == null) {
-            throw new NotePressException(NotePressErrorCode.RequestError, "上传参数 code 不能为空！");
-        }
-        UploadTypeEnum uploadTypeEnum = UploadTypeEnum.parseCodeToEnumType(uploadTypeCode);
-        //当前上传文件的用户ID
-        Long userId = MapUtil.getLong(uploadParam, UploadConstant.REQUEST_PARAM_USER_ID);
-        //业务id，如果在内容内上传那就是内容的ID，可以为空
-        String objectKeyId = MapUtil.getStr(uploadParam, UploadConstant.REQUEST_PARAM_OBJECT_KEY_ID);
-        //上传的一些说明
-        String remark = MapUtil.getStr(uploadParam, UploadConstant.REQUEST_PARAM_REMARK);
-        if (StringUtils.isEmpty(remark)) {
-            remark = uploadTypeEnum.getDesc();
-        }
-        //插入到数据库中
-        return Upload.builder()
-                .diskPath(uploadFilePath).virtualPath(virtualPath).upload(LocalDateTime.now())
-                .type(uploadTypeEnum).userId(userId).objectKeyId(objectKeyId).contentType(contentType).build()
-                .createBy(userId).gmtCreate(LocalDateTime.now()).remark(remark);
-    }
-
-    /**
-     * 统一处理返回结果
-     *
-     * @param ur
-     * @param reqType
-     * @param virtualPath
-     * @return
-     */
-    private static NotePressResult result(int ur, String reqType, String virtualPath) {
-        final LayUploader layUploader = NotePressUtils.getBean(LayUploader.class);
-        final NkUploader nkUploader = NotePressUtils.getBean(NkUploader.class);
-        final MdUploader mdUploader = NotePressUtils.getBean(MdUploader.class);
-        //如果是使用layui的组件上传
-        if (UploadConstant.UPLOAD_TYPE_LAY.equalsIgnoreCase(reqType)) {
-            if (ur == 1) {
-                return NotePressResult.createOkData(layUploader.ok("上传成功！", virtualPath));
-            } else {
-                return NotePressResult.createOkData(layUploader.err("上传失败！"));
-            }
-        }
-        //nkeditor或者kindeditor组件上传
-        else if (UploadConstant.UPLOAD_TYPE_NK.equalsIgnoreCase(reqType)) {
-            if (ur == 1) {
-                return NotePressResult.createOkData(nkUploader.ok("上传成功！", virtualPath));
-            } else {
-                return NotePressResult.createOkData(nkUploader.err("上传失败！"));
-            }
-        }
-        //editorMD组件上传
-        else if (UploadConstant.UPLOAD_TYPE_MD.equalsIgnoreCase(reqType)) {
-            if (ur == 1) {
-                return NotePressResult.createOkData(mdUploader.ok("上传成功！", virtualPath));
-            } else {
-                return NotePressResult.createOkData(mdUploader.err("上传失败！"));
-            }
-        }
-        //其他组件上传
-        else {
-            if (ur == 1) {
-                return NotePressResult.createOk("上传成功！", virtualPath);
-            } else {
-                return NotePressResult.createErrorMsg("上传失败！");
-            }
         }
     }
 }

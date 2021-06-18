@@ -3,7 +3,6 @@ package me.wuwenbin.notepress.web.controllers.api.admin;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Param;
@@ -28,12 +27,14 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/admin/session")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminSessionController extends NotePressBaseController {
 
-    private final ISysNoticeService sysNoticeService;
-    private final ISysUserService sysUserService;
-    private final IParamService paramService;
+    @Autowired
+    private ISysNoticeService sysNoticeService;
+    @Autowired
+    private ISysUserService sysUserService;
+    @Autowired
+    private IParamService paramService;
 
     @GetMapping("/user")
     public NotePressResult sessionUser() {

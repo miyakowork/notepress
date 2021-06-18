@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Deal;
 import me.wuwenbin.notepress.api.service.IDealService;
@@ -17,10 +16,10 @@ import java.time.LocalDateTime;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements IDealService {
 
-    private final DealMapper dealMapper;
+    @Autowired
+    private DealMapper dealMapper;
 
     @Override
     public NotePressResult findCoinSumByUserId(Long userId) {

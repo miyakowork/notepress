@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
@@ -39,16 +38,22 @@ import static java.util.stream.Collectors.toMap;
  */
 @Controller
 @RequestMapping
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class NotePressPageController extends NotePressBaseController {
 
-    private final IParamService paramService;
-    private final IContentService contentService;
-    private final ISysUserService userService;
-    private final IDictionaryService dictionaryService;
-    private final ICategoryService categoryService;
-    private final IReferService referService;
-    private final ISysNoticeService noticeService;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private IContentService contentService;
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private IDictionaryService dictionaryService;
+    @Autowired
+    private ICategoryService categoryService;
+    @Autowired
+    private IReferService referService;
+    @Autowired
+    private ISysNoticeService noticeService;
 
     /**
      * 内容页面

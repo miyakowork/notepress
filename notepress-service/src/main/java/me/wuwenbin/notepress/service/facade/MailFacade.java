@@ -5,7 +5,6 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.Setting;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.annotation.NotePressFacade;
 import me.wuwenbin.notepress.api.constants.CacheConstant;
 import me.wuwenbin.notepress.api.constants.FilePathConstants;
@@ -24,12 +23,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author wuwen
  */
 @NotePressFacade
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class MailFacade {
 
     @Qualifier("mailCodeCache")
-    private final Cache<String, String> mailCodeCache;
-    private IParamService paramService = NotePressUtils.getBean(IParamService.class);
+    @Autowired
+    private Cache<String, String> mailCodeCache;
+    private final IParamService paramService = NotePressUtils.getBean(IParamService.class);
 
 
     /**

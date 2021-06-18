@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.web.controllers.api.common;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.constants.UploadConstant;
@@ -39,12 +38,14 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class UploadController extends NotePressBaseController {
 
-    private final IUploadService uploadService;
-    private final IParamService paramService;
-    private final ISysUserService userService;
+    @Autowired
+    private IUploadService uploadService;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private ISysUserService userService;
 
     /**
      * 未登录的上传接口

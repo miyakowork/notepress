@@ -3,7 +3,6 @@ package me.wuwenbin.notepress.service.impl;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.Setting;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.wuwenbin.notepress.api.constants.NotePressConstants;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
@@ -27,10 +26,10 @@ import java.util.Map;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ParamServiceImpl extends ServiceImpl<ParamMapper, Param> implements IParamService {
 
-    private final ParamMapper paramMapper;
+    @Autowired
+    private ParamMapper paramMapper;
 
     @Override
     public NotePressResult fetchIndexMenu() {
@@ -154,10 +153,10 @@ public class ParamServiceImpl extends ServiceImpl<ParamMapper, Param> implements
         int c = paramMapper.selectCount(ParamQuery.build(paramName));
         if (c > 0) {
             paramMapper.updateValueByName(paramName, paramValue);
-            return NotePressResult.createOk("更新成功",param);
+            return NotePressResult.createOk("更新成功", param);
         } else {
             paramMapper.insert(param);
-            return NotePressResult.createOk("插入成功",param);
+            return NotePressResult.createOk("插入成功", param);
         }
     }
 }

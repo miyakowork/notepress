@@ -12,7 +12,6 @@ import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HtmlUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.code.kaptcha.Constants;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.wuwenbin.notepress.api.constants.CacheConstant;
@@ -67,19 +66,25 @@ import java.util.Map;
 @Slf4j
 @Controller
 @RequestMapping
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class NotePressLoginController extends NotePressBaseController {
 
     private static final SysSessionMapper SESSION_MAPPER = NotePressUtils.getBean(SysSessionMapper.class);
-    private final IParamService paramService;
-    private final IOauthService oauthService;
-    private final ISysUserService sysUserService;
-    private final IReferService referService;
-    private final MailFacade mailFacade;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private IOauthService oauthService;
+    @Autowired
+    private ISysUserService sysUserService;
+    @Autowired
+    private IReferService referService;
+    @Autowired
+    private MailFacade mailFacade;
     @Qualifier("mailCodeCache")
-    private final Cache<String, String> mailCodeCache;
+    @Autowired
+    private Cache<String, String> mailCodeCache;
     @Qualifier("kaptchaCodeCache")
-    private final Cache<String, String> kaptchaCodeCache;
+    @Autowired
+    private Cache<String, String> kaptchaCodeCache;
 
     /**
      * 跳转登录页面

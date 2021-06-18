@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
@@ -42,19 +41,28 @@ import java.util.stream.Collectors;
  */
 @Controller
 @RequestMapping("/token/ubs")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class NotePressUbsController extends NotePressBaseController {
 
-    private final ISysUserService userService;
-    private final IDictionaryService dictionaryService;
-    private final ISysNoticeService noticeService;
-    private final IContentService contentService;
-    private final IReferService referService;
-    private final IResService resService;
-    private final IParamService paramService;
-    private final IWxpayQrCodeService qrCodeService;
-    private final IDealService dealService;
-    private final IHideService hideService;
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private IDictionaryService dictionaryService;
+    @Autowired
+    private ISysNoticeService noticeService;
+    @Autowired
+    private IContentService contentService;
+    @Autowired
+    private IReferService referService;
+    @Autowired
+    private IResService resService;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private IWxpayQrCodeService qrCodeService;
+    @Autowired
+    private IDealService dealService;
+    @Autowired
+    private IHideService hideService;
 
     @GetMapping
     public String index(Model model) {

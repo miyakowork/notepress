@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
@@ -34,16 +33,21 @@ import static java.util.stream.Collectors.toMap;
  */
 @SuppressWarnings("DuplicatedCode")
 @Controller
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 @RequestMapping
 public class DefThemeController extends NotePressBaseController {
 
-    private final IContentService contentService;
-    private final IParamService paramService;
-    private final IReferService referService;
-    private final IDictionaryService dictionaryService;
-    private final ICategoryService categoryService;
-    private final ISysNoticeService noticeService;
+    @Autowired
+    private IContentService contentService;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private IReferService referService;
+    @Autowired
+    private IDictionaryService dictionaryService;
+    @Autowired
+    private ICategoryService categoryService;
+    @Autowired
+    private ISysNoticeService noticeService;
 
     @GetMapping("/note")
     public String notesPage(Model model, Page<Content> page, ContentPageQuery contentPageQuery,

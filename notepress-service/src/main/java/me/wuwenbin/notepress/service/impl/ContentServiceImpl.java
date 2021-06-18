@@ -13,7 +13,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.exception.NotePressException;
@@ -49,13 +48,16 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> implements IContentService {
 
-    private final ContentMapper contentMapper;
-    private final CategoryMapper categoryMapper;
-    private final DictionaryMapper dictionaryMapper;
-    private final ReferMapper referMapper;
+    @Autowired
+    private ContentMapper contentMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
+    @Autowired
+    private ReferMapper referMapper;
 
     @Override
     public NotePressResult findContentList(IPage<Content> contentPage, LayuiTableQuery<Content> layuiTableQuery, String cateIds) {

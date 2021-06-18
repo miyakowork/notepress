@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Dictionary;
 import me.wuwenbin.notepress.api.service.IDictionaryService;
@@ -18,10 +17,10 @@ import java.time.LocalDateTime;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Dictionary> implements IDictionaryService {
 
-    private final DictionaryMapper dictionaryMapper;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     /**
      * 更新字典信息

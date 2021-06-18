@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
@@ -38,17 +37,24 @@ import java.util.stream.Collectors;
  */
 @Controller
 @RequestMapping("/content")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class NotePressContentController extends NotePressBaseController {
 
-    private final IContentService contentService;
-    private final IDictionaryService dictionaryService;
-    private final ISysUserService userService;
-    private final ISysNoticeService noticeService;
-    private final ICategoryService categoryService;
-    private final IReferService referService;
-    private final IDealService dealService;
-    private final IHideService hideService;
+    @Autowired
+    private IContentService contentService;
+    @Autowired
+    private IDictionaryService dictionaryService;
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private ISysNoticeService noticeService;
+    @Autowired
+    private ICategoryService categoryService;
+    @Autowired
+    private IReferService referService;
+    @Autowired
+    private IDealService dealService;
+    @Autowired
+    private IHideService hideService;
 
 
     @GetMapping("/{cId}")

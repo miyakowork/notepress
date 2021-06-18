@@ -1,6 +1,5 @@
 package me.wuwenbin.notepress.web.controllers.api.admin;
 
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Param;
@@ -30,13 +29,16 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/admin/index")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminIndexController extends NotePressBaseController {
 
-    private final IParamService paramService;
-    private final IContentService contentService;
-    private final ISysUserService userService;
-    private final ISysLogService sysLogService;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private IContentService contentService;
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private ISysLogService sysLogService;
 
     @GetMapping("/menu")
     public NotePressResult menuJson() {

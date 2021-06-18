@@ -11,7 +11,6 @@ import me.wuwenbin.notepress.api.exception.NotePressException;
 import me.wuwenbin.notepress.api.model.entity.system.SysUser;
 import me.wuwenbin.notepress.api.model.jwt.JwtHelper;
 import me.wuwenbin.notepress.api.service.ISysUserService;
-import me.wuwenbin.notepress.api.utils.NotePressCookieUtils;
 import me.wuwenbin.notepress.api.utils.NotePressServletUtils;
 import me.wuwenbin.notepress.api.utils.NotePressUtils;
 import me.wuwenbin.notepress.service.mapper.SysSessionMapper;

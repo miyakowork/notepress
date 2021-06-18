@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.service.facade;
 
 import cn.hutool.json.JSONUtil;
 import cn.hutool.setting.Setting;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.annotation.NotePressFacade;
 import me.wuwenbin.notepress.api.model.entity.Param;
 import me.wuwenbin.notepress.api.service.IParamService;
@@ -15,10 +14,10 @@ import java.util.Map;
  * @author wuwenbin
  */
 @NotePressFacade
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ThemeFacade {
 
-    private final IParamService paramService;
+    @Autowired
+    private IParamService paramService;
 
     /**
      * 初始化主题设置

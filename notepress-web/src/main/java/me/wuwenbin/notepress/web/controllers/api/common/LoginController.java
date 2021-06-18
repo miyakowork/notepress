@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.web.controllers.api.common;
 
 import cn.hutool.cache.Cache;
 import com.google.code.kaptcha.Constants;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.wuwenbin.notepress.api.annotation.JwtIgnore;
 import me.wuwenbin.notepress.api.model.NotePressResult;
@@ -29,14 +28,16 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class LoginController extends NotePressBaseController {
 
     private static final SysSessionMapper SESSION_MAPPER = NotePressUtils.getBean(SysSessionMapper.class);
-    private final ISysUserService userService;
-    private final JwtHelper jwtHelper;
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private JwtHelper jwtHelper;
     @Qualifier("kaptchaCodeCache")
-    private final Cache<String, String> kaptchaCodeCache;
+    @Autowired
+    private Cache<String, String> kaptchaCodeCache;
 
     /**
      * 后台管理/网站用户登录

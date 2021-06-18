@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.web.controllers.api.theme;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.model.entity.Param;
 import me.wuwenbin.notepress.api.service.IParamService;
@@ -19,10 +18,10 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 @Controller
 @RequestMapping()
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class NotePressIndexController extends NotePressBaseController {
 
-    private final IParamService paramService;
+    @Autowired
+    private IParamService paramService;
 
     @GetMapping("/")
     public ModelAndView indexPage(SitePreference sitePreference) {

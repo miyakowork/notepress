@@ -7,7 +7,6 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.model.entity.Param;
 import me.wuwenbin.notepress.api.model.entity.system.SysUser;
@@ -17,7 +16,6 @@ import me.wuwenbin.notepress.api.utils.NotePressUtils;
 import me.wuwenbin.notepress.service.utils.NotePressSessionUtils;
 import me.wuwenbin.notepress.web.controllers.api.NotePressBaseController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,16 +29,19 @@ import java.util.stream.Collectors;
 /**
  * @author wuwenbin
  */
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 @ControllerAdvice(basePackages = "me.wuwenbin.notepress.web.controllers")
 public class NotePressControllerAdvice extends NotePressBaseController {
 
-    private final IParamService paramService;
-    private final ICategoryService categoryService;
-    private final IContentService contentService;
-    private final ISysNoticeService sysNoticeService;
-    private final IDealService dealService;
-    private final Environment environment;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private ICategoryService categoryService;
+    @Autowired
+    private IContentService contentService;
+    @Autowired
+    private ISysNoticeService sysNoticeService;
+    @Autowired
+    private IDealService dealService;
 
 
     @ModelAttribute("settings")

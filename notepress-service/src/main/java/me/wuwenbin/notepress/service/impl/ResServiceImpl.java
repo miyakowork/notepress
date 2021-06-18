@@ -13,7 +13,6 @@ import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
@@ -53,14 +52,18 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ResServiceImpl extends ServiceImpl<ResMapper, Res> implements IResService {
 
-    private final ResMapper resMapper;
-    private final ResCateMapper resCateMapper;
-    private final ReferMapper referMapper;
-    private final ParamMapper paramMapper;
-    private final DealMapper dealMapper;
+    @Autowired
+    private ResMapper resMapper;
+    @Autowired
+    private ResCateMapper resCateMapper;
+    @Autowired
+    private ReferMapper referMapper;
+    @Autowired
+    private ParamMapper paramMapper;
+    @Autowired
+    private DealMapper dealMapper;
 
     @Override
     public NotePressResult findResList(IPage<Res> resPage, LayuiTableQuery<Res> layuiTableQuery) {

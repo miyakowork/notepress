@@ -6,7 +6,6 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Content;
@@ -44,15 +43,20 @@ import static me.wuwenbin.notepress.api.constants.ParamKeyConstant.SWITCH_COMMEN
  */
 @Controller
 @RequestMapping("/message")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class NotePressNoticeController extends NotePressBaseController {
 
-    private final IParamService paramService;
-    private final IDictionaryService dictionaryService;
-    private final ISysNoticeService noticeService;
-    private final ISysUserService userService;
-    private final IContentService contentService;
-    private final MailFacade mailFacade;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private IDictionaryService dictionaryService;
+    @Autowired
+    private ISysNoticeService noticeService;
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private IContentService contentService;
+    @Autowired
+    private MailFacade mailFacade;
 
     @GetMapping
     public String messagePage(Model model, Page<SysNotice> noticePage) {

@@ -3,7 +3,6 @@ package me.wuwenbin.notepress.web.controllers.api.admin;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.groups.ReplyComment;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.system.SysNotice;
@@ -24,10 +23,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/admin/notice")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminNoticeController extends NotePressBaseController {
 
-    private final ISysNoticeService sysNoticeService;
+    @Autowired
+    private ISysNoticeService sysNoticeService;
 
     @GetMapping("/tabs")
     public NotePressResult noticeTypes() {

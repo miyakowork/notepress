@@ -1,6 +1,5 @@
 package me.wuwenbin.notepress.web.controllers.api.admin;
 
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Param;
 import me.wuwenbin.notepress.api.query.ParamQuery;
@@ -22,10 +21,10 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/admin/settings")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminSettingsController extends NotePressBaseController {
 
-    private final IParamService paramService;
+    @Autowired
+    private IParamService paramService;
 
     @GetMapping("/all")
     public NotePressResult all() {

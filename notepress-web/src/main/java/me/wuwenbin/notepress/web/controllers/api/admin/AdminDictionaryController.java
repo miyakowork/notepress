@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.web.controllers.api.admin;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
@@ -27,11 +26,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/admin/dictionary")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminDictionaryController extends NotePressBaseController {
 
-    private final IDictionaryService dictionaryService;
-    private final IReferService referService;
+    @Autowired
+    private IDictionaryService dictionaryService;
+    @Autowired
+    private IReferService referService;
 
     @GetMapping("/list")
     public NotePressResult dictionaryList() {

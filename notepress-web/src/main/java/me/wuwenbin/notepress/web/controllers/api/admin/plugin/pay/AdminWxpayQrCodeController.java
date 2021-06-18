@@ -3,7 +3,6 @@ package me.wuwenbin.notepress.web.controllers.api.admin.plugin.pay;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.plugin.pay.PayType;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.plugin.pay.PayQrCode;
@@ -31,10 +30,10 @@ import java.util.Objects;
  * @author wuwenbin
  */
 @RestController
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminWxpayQrCodeController extends NotePressBaseController {
 
-    private final IWxpayQrCodeService wxpayQrCodeService;
+    @Autowired
+    private IWxpayQrCodeService wxpayQrCodeService;
 
     @PostMapping("/admin/wxpay")
     public NotePressResult qrCodeList(Page<PayQrCode> categoryPage,

@@ -4,7 +4,6 @@ import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.ResCate;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
@@ -23,10 +22,10 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ResCateServiceImpl extends ServiceImpl<ResCateMapper, ResCate> implements IResCateService {
 
-    private final ResCateMapper categoryMapper;
+    @Autowired
+    private ResCateMapper categoryMapper;
 
     @Override
     public NotePressResult findCategoryList(IPage<ResCate> categoryPage, LayuiTableQuery<ResCate> layuiTableQuery) {

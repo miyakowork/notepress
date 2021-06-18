@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Refer;
@@ -24,11 +23,12 @@ import java.time.LocalDateTime;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ReferServiceImpl extends ServiceImpl<ReferMapper, Refer> implements IReferService {
 
-    private final ReferMapper referMapper;
-    private final SysUserMapper userMapper;
+    @Autowired
+    private ReferMapper referMapper;
+    @Autowired
+    private SysUserMapper userMapper;
 
     @Override
     public NotePressResult hasBind(String source, String uuid) {

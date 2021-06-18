@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.entity.system.SysLog;
 import me.wuwenbin.notepress.api.service.ISysLogService;
 import me.wuwenbin.notepress.service.mapper.SysLogMapper;
@@ -17,10 +16,10 @@ import java.util.Map;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ISysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> implements ISysLogService {
 
-    private final SysLogMapper sysLogMapper;
+    @Autowired
+    private SysLogMapper sysLogMapper;
 
     /**
      * 查找日志

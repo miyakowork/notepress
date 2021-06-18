@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.web.controllers.api.theme;
 
 import cn.hutool.core.util.StrUtil;
 import com.qiniu.util.Auth;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Refer;
@@ -33,12 +32,14 @@ import java.util.stream.Collectors;
  */
 @Controller
 @RequestMapping("/res")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class NotePressResourceController extends NotePressBaseController {
 
-    private final IResService resService;
-    private final IReferService referService;
-    private final IResCateService resCateService;
+    @Autowired
+    private IResService resService;
+    @Autowired
+    private IReferService referService;
+    @Autowired
+    private IResCateService resCateService;
 
     @GetMapping
     public String index(Model model) {

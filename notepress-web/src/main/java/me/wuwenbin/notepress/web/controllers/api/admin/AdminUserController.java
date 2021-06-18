@@ -5,7 +5,6 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Deal;
 import me.wuwenbin.notepress.api.model.entity.system.SysUser;
@@ -35,13 +34,16 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/admin/user")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminUserController extends NotePressBaseController {
 
-    private final ISysUserService userService;
-    private final IReferService referService;
-    private final ISysNoticeService noticeService;
-    private final IDealService dealService;
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private IReferService referService;
+    @Autowired
+    private ISysNoticeService noticeService;
+    @Autowired
+    private IDealService dealService;
 
     @PostMapping
     public NotePressResult userList(Page<SysUser> sysUserPage, @RequestBody LayuiTableQuery<SysUser> layuiTableQuery) {

@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.web.controllers.api.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.system.Oauth;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
@@ -24,10 +23,10 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("/admin/oauth")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminOauthController extends NotePressBaseController {
 
-    private final IOauthService oauthService;
+    @Autowired
+    private IOauthService oauthService;
 
     @PostMapping
     public NotePressResult userList(Page<Oauth> sysUserPage, @RequestBody LayuiTableQuery<Oauth> layuiTableQuery) {

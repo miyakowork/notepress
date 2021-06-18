@@ -8,7 +8,6 @@ import cn.hutool.http.HtmlUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Dictionary;
@@ -37,11 +36,12 @@ import java.util.*;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class SysNoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice> implements ISysNoticeService {
 
-    private final SysNoticeMapper sysNoticeMapper;
-    private final DictionaryMapper dictionaryMapper;
+    @Autowired
+    private SysNoticeMapper sysNoticeMapper;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     @Override
     public NotePressResult findNoticeList(IPage<SysNotice> noticePage, LayuiTableQuery<SysNotice> layuiTableQuery) {

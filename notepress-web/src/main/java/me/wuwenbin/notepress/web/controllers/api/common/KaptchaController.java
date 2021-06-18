@@ -3,7 +3,6 @@ package me.wuwenbin.notepress.web.controllers.api.common;
 import cn.hutool.cache.Cache;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.wuwenbin.notepress.api.annotation.JwtIgnore;
 import me.wuwenbin.notepress.api.utils.NotePressUtils;
@@ -26,11 +25,11 @@ import java.io.IOException;
  */
 @Slf4j
 @Controller
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class KaptchaController extends NotePressBaseController {
 
     @Qualifier("kaptchaCodeCache")
-    private final Cache<String, String> kaptchaCodeCache;
+    @Autowired
+    private Cache<String, String> kaptchaCodeCache;
 
     @GetMapping("/image/code")
     @JwtIgnore

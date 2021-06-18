@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.web.controllers.api.common;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Param;
 import me.wuwenbin.notepress.api.query.ParamQuery;
@@ -21,10 +20,10 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/global")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class GlobalController extends NotePressBaseController {
 
-    private final IParamService paramService;
+    @Autowired
+    private IParamService paramService;
 
     @GetMapping("/conf")
     public NotePressResult conf() {

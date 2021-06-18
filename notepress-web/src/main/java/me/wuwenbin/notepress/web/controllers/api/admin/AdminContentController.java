@@ -3,7 +3,6 @@ package me.wuwenbin.notepress.web.controllers.api.admin;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Content;
 import me.wuwenbin.notepress.api.model.entity.system.SysUser;
@@ -27,10 +26,10 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/admin/content")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminContentController extends NotePressBaseController {
 
-    private final IContentService contentService;
+    @Autowired
+    private IContentService contentService;
 
     @GetMapping("/nextContentId")
     public NotePressResult nextContentId() {

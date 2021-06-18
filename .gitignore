@@ -10,3 +10,4 @@ gen
 notepress-core/src/main/java/me/wuwenbin/notepress/core/.DS_Store
 notepress-core/src/main/java/me/wuwenbin/notepress/core/constants/.DS_Store
 !/.idea/
+target

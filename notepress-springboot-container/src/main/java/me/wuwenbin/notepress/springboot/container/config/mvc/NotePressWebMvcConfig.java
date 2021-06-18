@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.springboot.container.config.mvc;
 
 import cn.hutool.setting.Setting;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.NotePressConstants;
 import me.wuwenbin.notepress.api.constants.UploadConstant;
 import me.wuwenbin.notepress.api.utils.NotePressUtils;
@@ -35,11 +34,11 @@ import java.util.List;
  * @author wuwenbin
  */
 @Configuration
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class NotePressWebMvcConfig implements WebMvcConfigurer {
 
     @Qualifier("notePressSetting")
-    private final Setting notePressSetting;
+    @Autowired
+    private Setting notePressSetting;
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {

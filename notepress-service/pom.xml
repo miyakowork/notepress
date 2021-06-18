@@ -6,7 +6,7 @@
 
     <groupId>me.wuwenbin</groupId>
     <artifactId>notepress-service</artifactId>
-    <version>v1.2-210609</version>
+    <version>v1.3-210618</version>
 
     <name>notepress-support-service</name>
     <description>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>me.wuwenbin</groupId>
             <artifactId>notepress-api</artifactId>
-            <version>v1.2-210609</version>
+            <version>v1.3-210618</version>
         </dependency>
 
         <dependency>

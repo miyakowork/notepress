@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.setting.Setting;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Param;
@@ -24,10 +23,10 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/admin/theme")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminThemeController extends NotePressBaseController {
 
-    private final IParamService paramService;
+    @Autowired
+    private IParamService paramService;
 
     @PostMapping("/update")
     public NotePressResult update(String confStr) {

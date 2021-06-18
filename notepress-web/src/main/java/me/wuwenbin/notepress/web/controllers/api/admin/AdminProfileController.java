@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.web.controllers.api.admin;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Param;
@@ -27,11 +26,12 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("/admin/profile")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminProfileController extends NotePressBaseController {
 
-    private final ISysUserService sysUserService;
-    private final IParamService paramService;
+    @Autowired
+    private ISysUserService sysUserService;
+    @Autowired
+    private IParamService paramService;
 
     @PostMapping("/update")
     public NotePressResult updateAdminProfile(@NotNull SysUser user, String oldPass, String alipay, String wechatPay) {

@@ -3,7 +3,6 @@ package me.wuwenbin.notepress.service.impl.plugin.pay;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.plugin.pay.PayQrCode;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
@@ -20,10 +19,10 @@ import java.util.List;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class WxpayQrcodeServiceImpl extends ServiceImpl<IPayQrCodeMapper, PayQrCode> implements IWxpayQrCodeService {
 
-    private final IPayQrCodeMapper payQrCodeMapper;
+    @Autowired
+    private IPayQrCodeMapper payQrCodeMapper;
 
     @Override
     public NotePressResult findQrCodeList(IPage<PayQrCode> categoryPage, LayuiTableQuery<PayQrCode> layuiTableQuery) {

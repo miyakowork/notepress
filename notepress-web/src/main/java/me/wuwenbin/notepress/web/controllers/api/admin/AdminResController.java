@@ -4,7 +4,6 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.UploadConstant;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Res;
@@ -23,10 +22,10 @@ import java.util.Arrays;
  */
 @RestController
 @RequestMapping("/admin/res")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminResController extends NotePressBaseController {
 
-    private final IResService resService;
+    @Autowired
+    private IResService resService;
 
     @PostMapping
     public NotePressResult resList(Page<Res> categoryPage,

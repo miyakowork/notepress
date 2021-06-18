@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.web.controllers.api.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Category;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
@@ -24,10 +23,10 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/admin/category")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class AdminCategoryController extends NotePressBaseController {
 
-    private final ICategoryService categoryService;
+    @Autowired
+    private ICategoryService categoryService;
 
     @PostMapping
     public NotePressResult resCateList(Page<Category> categoryPage,

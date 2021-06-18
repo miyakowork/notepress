@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.system.Oauth;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
@@ -20,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class OauthServiceImpl extends ServiceImpl<OauthMapper, Oauth> implements IOauthService {
 
-    private final OauthMapper oauthMapper;
+    @Autowired
+    private OauthMapper oauthMapper;
 
     /**
      * 查询数据库中是否配置了任何一条 justoauth 配置

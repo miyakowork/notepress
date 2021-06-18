@@ -2,7 +2,6 @@ package me.wuwenbin.notepress.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Category;
@@ -23,11 +22,12 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements ICategoryService {
 
-    private final CategoryMapper categoryMapper;
-    private final ReferMapper referMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
+    @Autowired
+    private ReferMapper referMapper;
 
     @Override
     public NotePressResult findCategoryList(IPage<Category> categoryPage, LayuiTableQuery<Category> layuiTableQuery) {

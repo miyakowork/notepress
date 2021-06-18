@@ -1,7 +1,6 @@
 package me.wuwenbin.notepress.web.controllers.api;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.model.NotePressResult;
@@ -22,11 +21,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping("/init")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class InitController extends NotePressBaseController {
 
-    private final IParamService paramService;
-    private final ISysUserService sysUserService;
+    @Autowired
+    private IParamService paramService;
+    @Autowired
+    private ISysUserService sysUserService;
 
     @GetMapping("/uploadPath")
     @ResponseBody

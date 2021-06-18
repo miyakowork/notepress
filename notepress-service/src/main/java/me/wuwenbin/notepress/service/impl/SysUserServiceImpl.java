@@ -7,7 +7,6 @@ import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.system.SysUser;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
@@ -34,13 +33,15 @@ import static me.wuwenbin.notepress.api.constants.ParamKeyConstant.*;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
-    private final SysUserMapper userMapper;
-    private final ParamMapper paramMapper;
+    @Autowired
+    private SysUserMapper userMapper;
+    @Autowired
+    private ParamMapper paramMapper;
     @Qualifier("passwordRetryCache")
-    private final Cache<String, Integer> passwordRetryCache;
+    @Autowired
+    private Cache<String, Integer> passwordRetryCache;
 
     /**
      * 初始化管理员账号
