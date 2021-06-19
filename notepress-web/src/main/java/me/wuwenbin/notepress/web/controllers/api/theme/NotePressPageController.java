@@ -264,7 +264,12 @@ public class NotePressPageController extends NotePressBaseController {
     private void setNoneShow(ContentPageQuery contentPageQuery, Map<String, Object> themeSettings) {
         String noneCates = MapUtil.getStr(themeSettings, "noneCates");
         if (StrUtil.isNotEmpty(noneCates)) {
-            contentPageQuery.setExcludeCates(contentPageQuery.getExcludeCates().concat(".").concat(noneCates));
+            String excludeCates = contentPageQuery.getExcludeCates();
+            if (StrUtil.isNotEmpty(excludeCates)) {
+                contentPageQuery.setExcludeCates(excludeCates.concat(".").concat(noneCates));
+            } else {
+                contentPageQuery.setExcludeCates(noneCates);
+            }
         }
     }
 
