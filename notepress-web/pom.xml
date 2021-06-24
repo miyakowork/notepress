@@ -40,6 +40,13 @@
             <version>3.4.0</version>
         </dependency>
 
+        <!--jsoup 解析 html-->
+        <dependency>
+            <groupId>cn.wanghaomiao</groupId>
+            <artifactId>JsoupXpath</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.mobile</groupId>
             <artifactId>spring-mobile-device</artifactId>

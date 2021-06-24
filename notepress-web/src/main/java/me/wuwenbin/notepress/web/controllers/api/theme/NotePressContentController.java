@@ -71,6 +71,7 @@ public class NotePressContentController extends NotePressBaseController {
         model.addAttribute("cateList", categoryService.list());
         model.addAttribute("tags", contentTagList(cId));
 
+
         String articlePageStyle = MapUtil.getStr(themeSettings, "article_page_style");
         if ("-1".equalsIgnoreCase(articlePageStyle) || "1".equalsIgnoreCase(articlePageStyle)) {
             //随机几篇文章
