@@ -19,6 +19,7 @@ import me.wuwenbin.notepress.api.service.*;
 import me.wuwenbin.notepress.service.impl.helper.ContentHelper;
 import me.wuwenbin.notepress.service.utils.NotePressSessionUtils;
 import me.wuwenbin.notepress.web.controllers.api.NotePressBaseController;
+import me.wuwenbin.notepress.web.controllers.utils.ContentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,6 +72,9 @@ public class NotePressContentController extends NotePressBaseController {
         model.addAttribute("cateList", categoryService.list());
         model.addAttribute("tags", contentTagList(cId));
 
+        ContentUtils.ContentIncludeHeaders contentIncludeHeaders = ContentUtils.getContentIncludeHeaders(content);
+        content = contentIncludeHeaders.getContent();
+        model.addAttribute("headers", contentIncludeHeaders.getHeaders());
 
         String articlePageStyle = MapUtil.getStr(themeSettings, "article_page_style");
         if ("-1".equalsIgnoreCase(articlePageStyle) || "1".equalsIgnoreCase(articlePageStyle)) {

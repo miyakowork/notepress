@@ -1,7 +1,12 @@
 package me.wuwenbin.notepress.web.controllers.utils;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.convert.Convert;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import me.wuwenbin.notepress.api.model.entity.Content;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -22,11 +27,14 @@ public class ContentUtils {
 
     /* 根据html内容计算出目录结构
      *
-     * @param document
+     * @param content
      * @return
      */
-    public static List<Header> getHeadersByHtml(Document document) {
+    public static ContentIncludeHeaders getContentIncludeHeaders(Content content) {
 
+        String contentHtml = content.getHtmlContent();
+        contentHtml = contentHtml.replace(" />", ">");
+        Document document = Jsoup.parse(contentHtml);
         document.outputSettings().prettyPrint(false);
 
         //从 h1~h6 都包含进去
@@ -57,7 +65,7 @@ public class ContentUtils {
                 }
             }
         }
-        return headerNodes.stream()
+        List<Header> headers = headerNodes.stream()
                 .map(n -> {
                     Header header = new Header();
                     String levelStr = n.asElement().nodeName().replace("h", "");
@@ -67,45 +75,24 @@ public class ContentUtils {
                     header.setPosId(n.asElement().attr("id"));
                     return header;
                 }).collect(Collectors.toList());
+
+        content.setHtmlContent(Convert.toStr(doc.selOne("//body/html()")));
+        return new ContentIncludeHeaders().setContent(content).setHeaders(headers);
     }
 
+    @Data
     static class Header {
         private String title;
         private int level;
         private String id;
         private String posId;
 
-        public String getTitle() {
-            return title;
-        }
+    }
 
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public void setLevel(int level) {
-            this.level = level;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getPosId() {
-            return posId;
-        }
-
-        public void setPosId(String posId) {
-            this.posId = posId;
-        }
-
+    @Data
+    @Accessors(chain = true)
+    public static class ContentIncludeHeaders {
+        private List<Header> headers;
+        private Content content;
     }
 }
