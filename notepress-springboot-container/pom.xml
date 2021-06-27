@@ -8,10 +8,10 @@
     <parent>
         <artifactId>notepress-parent</artifactId>
         <groupId>me.wuwenbin</groupId>
-        <version>v1.3-210618</version>
+        <version>v1.4.1</version>
     </parent>
     <artifactId>notepress-springboot-container</artifactId>
-    <version>v1.3-210618</version>
+    <version>v1.4.1</version>
     <name>notepress-support-container</name>
 
     <description>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>me.wuwenbin</groupId>
             <artifactId>notepress-web</artifactId>
-            <version>v1.3-210618</version>
+            <version>v1.4.1</version>
         </dependency>
     </dependencies>
 

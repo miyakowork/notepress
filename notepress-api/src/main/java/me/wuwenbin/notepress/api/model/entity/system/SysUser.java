@@ -18,10 +18,9 @@ import java.time.LocalDateTime;
  *
  * @author wuwenbin
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
-@ToString
+@EqualsAndHashCode(callSuper = true)
 public class SysUser extends BaseEntity<SysUser> {
 
     private Long id;
@@ -51,5 +50,6 @@ public class SysUser extends BaseEntity<SysUser> {
      * 是否为管理员
      */
     private Boolean admin;
+
 
 }

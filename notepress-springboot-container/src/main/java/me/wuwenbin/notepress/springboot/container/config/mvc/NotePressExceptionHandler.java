@@ -1,5 +1,6 @@
 package me.wuwenbin.notepress.springboot.container.config.mvc;
 
+import lombok.extern.slf4j.Slf4j;
 import me.wuwenbin.notepress.api.exception.NotePressException;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  * @author wuwen
  */
-@ControllerAdvice
+@Slf4j
+@ControllerAdvice(basePackages = "me.wuwenbin.notepress.web.controllers")
 public class NotePressExceptionHandler {
 
     @ExceptionHandler(NotePressException.class)
@@ -22,5 +24,13 @@ public class NotePressExceptionHandler {
             return result;
         }
         return NotePressResult.createError(e);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    public NotePressResult handle(Exception e) {
+        e.printStackTrace();
+        log.error("内部服务错误：{}", e.getMessage());
+        return NotePressResult.createErrorMsg("内部服务异常");
     }
 }

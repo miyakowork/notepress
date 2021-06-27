@@ -1,11 +1,12 @@
 package me.wuwenbin.notepress.service.mapper;
 
-import me.wuwenbin.notepress.api.model.entity.system.Oauth;
-import me.wuwenbin.notepress.service.mapper.base.NotePressMapper;
-import me.wuwenbin.notepress.api.query.OauthQuery;
 import me.wuwenbin.notepress.api.annotation.MybatisMapper;
+import me.wuwenbin.notepress.api.model.entity.system.Oauth;
+import me.wuwenbin.notepress.api.query.OauthQuery;
+import me.wuwenbin.notepress.service.mapper.base.NotePressMapper;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.exception.AuthException;
+import me.zhyd.oauth.request.AuthGiteeRequest;
 import me.zhyd.oauth.request.AuthGithubRequest;
 import me.zhyd.oauth.request.AuthQqRequest;
 import me.zhyd.oauth.request.AuthRequest;
@@ -40,6 +41,13 @@ public interface OauthMapper extends NotePressMapper<Oauth> {
                 break;
             case "qq":
                 authRequest = new AuthQqRequest(AuthConfig.builder()
+                        .clientId(oauth.getClientId())
+                        .clientSecret(oauth.getClientSecret())
+                        .redirectUri(oauth.getRedirectUri())
+                        .build());
+                break;
+            case "gitee":
+                authRequest = new AuthGiteeRequest(AuthConfig.builder()
                         .clientId(oauth.getClientId())
                         .clientSecret(oauth.getClientSecret())
                         .redirectUri(oauth.getRedirectUri())

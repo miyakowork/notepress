@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.wuwenbin.notepress.api.constants.NotePressConstants;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
@@ -77,16 +78,17 @@ public class NotePressContentController extends NotePressBaseController {
         model.addAttribute("headers", contentIncludeHeaders.getHeaders());
 
         String articlePageStyle = MapUtil.getStr(themeSettings, "article_page_style");
-        if ("-1".equalsIgnoreCase(articlePageStyle) || "1".equalsIgnoreCase(articlePageStyle)) {
+        if (NotePressConstants.PAGE_STYLE_LEFT.equalsIgnoreCase(articlePageStyle)
+                || NotePressConstants.PAGE_STYLE_RIGHT.equalsIgnoreCase(articlePageStyle)) {
             //随机几篇文章
             List<Content> randomContents = toListBeanNull(contentService.findRandomContents(6));
             model.addAttribute("randomContents", randomContents);
-            //友情链接
-            List<Dictionary> linkList = dictionaryService.list(DictionaryQuery.build("dictionary_type", DictionaryTypeEnum.LINK));
-            model.addAttribute("linkList", linkList);
             //数量前30的tag
             List<Dictionary> tagListTop30 = toListBeanNull(dictionaryService.top30TagList());
             model.addAttribute("tagList", tagListTop30);
+            //友情链接
+            List<Dictionary> linkList = dictionaryService.list(DictionaryQuery.build("dictionary_type", DictionaryTypeEnum.LINK));
+            model.addAttribute("linkList", linkList);
         }
         OrderItem oi1 = OrderItem.desc("floor");
         OrderItem oi2 = OrderItem.desc("gmt_create");

@@ -6,6 +6,9 @@ import me.wuwenbin.notepress.api.model.entity.Category;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
 import me.wuwenbin.notepress.api.service.base.INotePressService;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author wuwenbin
  */
@@ -20,11 +23,12 @@ public interface ICategoryService extends INotePressService<Category> {
      */
     NotePressResult findCategoryList(IPage<Category> categoryPage, LayuiTableQuery<Category> layuiTableQuery);
 
+
     /**
-     * 根据内容的id查找内容对应的分类集合
+     * 根据内容id集合查找对分类集合
      *
-     * @param contentId
+     * @param contentIds
      * @return
      */
-    NotePressResult findCategoryListByContentId(String contentId);
+    Map<String, List<Category>> findCategoryListByContentIds(List<String> contentIds);
 }

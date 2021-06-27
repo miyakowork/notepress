@@ -6,9 +6,11 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HtmlUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
+import me.wuwenbin.notepress.api.exception.NotePressException;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Dictionary;
 import me.wuwenbin.notepress.api.model.entity.system.SysNotice;
@@ -23,6 +25,7 @@ import me.wuwenbin.notepress.api.utils.NotePressServletUtils;
 import me.wuwenbin.notepress.service.mapper.DictionaryMapper;
 import me.wuwenbin.notepress.service.mapper.SysNoticeMapper;
 import me.wuwenbin.notepress.service.utils.NotePressSessionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,14 +100,19 @@ public class SysNoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice
 
     @Override
     public NotePressResult subMessage(SysNotice notice) {
+        String sendMsg = HtmlUtil
+                .removeHtmlTag(
+                        NotePressRequestUtils.stripSqlXss(notice.getCommentHtml()), false, "style", "link", "meta", "script");
+        if (StringUtils.isEmpty(sendMsg) && StringUtils.isNotEmpty(notice.getCommentHtml())) {
+            throw new NotePressException("评论不合法");
+        }
+
         HttpServletRequest request = NotePressServletUtils.getRequest();
         notice.setIpAddr(NotePressIpUtils.getRemoteAddress(request));
         notice.setIpInfo(NotePressIpUtils.getIpInfo(notice.getIpAddr()).getAddress());
         notice.setUserAgent(request.getHeader("user-agent"));
         notice.setCommentText(HtmlUtil.cleanHtmlTag(notice.getCommentHtml()));
-        notice.setCommentHtml(
-                HtmlUtil.removeHtmlTag(
-                        NotePressRequestUtils.stripSqlXss(notice.getCommentHtml()), false, "style", "link", "meta", "script"));
+        notice.setCommentHtml(sendMsg);
         notice.setGmtCreate(LocalDateTime.now());
         List<Dictionary> keywords = dictionaryMapper.selectList(DictionaryQuery.build("dictionary_type", DictionaryTypeEnum.SENSITIVE_WORD));
         keywords.forEach(
@@ -123,4 +131,19 @@ public class SysNoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice
         return NotePressResult.createOkData(noticePage);
     }
 
+    /**
+     * 文章评论数量
+     *
+     * @param contentIds
+     * @return
+     */
+    @Override
+    public Map<String, Integer> contentNoticeCnt(List<String> contentIds) {
+        Map<String, Integer> result = new HashMap<>(contentIds.size());
+        for (String contentId : contentIds) {
+            int cnt = sysNoticeMapper.selectCount(Wrappers.<SysNotice>query().eq("content_id", contentId));
+            result.put(contentId, cnt);
+        }
+        return result;
+    }
 }

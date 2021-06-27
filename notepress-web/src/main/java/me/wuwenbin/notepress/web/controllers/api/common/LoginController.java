@@ -64,30 +64,31 @@ public class LoginController extends NotePressBaseController {
         }
         NotePressResult loginResult = userService.doLogin(username, password, NotePressIpUtils.getRemoteAddress(request));
         NotePressResult loginResponse;
-        if (loginResult.isSuccess()) {
-            SysUser sessionUser = loginResult.getDataBean(SysUser.class);
-            loginResponse = writeJsonOkMsg("登录成功");
+        if (!loginResult.isSuccess()) {
+            return NotePressResult.createErrorMsg(loginResult.getMsg());
+        }
 
-            if ("admin".equals(loginType)) {
-                if (sessionUser.getAdmin()) {
-                    String token = NotePressJwtUtils.createJwt(sessionUser, jwtHelper);
-                    loginResponse.put("access_token", NotePressJwtUtils.TOKEN_PREFIX + token);
-                    NotePressSessionUtils.setSessionUser(sessionUser, token);
-                } else {
-                    loginResponse = NotePressResult.createErrorMsg("非法登录！");
-                }
+        SysUser sessionUser = loginResult.getDataBean(SysUser.class);
+        loginResponse = writeJsonOkMsg("登录成功");
+
+        if ("admin".equals(loginType)) {
+            if (sessionUser.getAdmin()) {
+                String token = NotePressJwtUtils.createJwt(sessionUser, jwtHelper);
+                loginResponse.put("access_token", NotePressJwtUtils.TOKEN_PREFIX + token);
+                NotePressSessionUtils.setSessionUser(sessionUser, token);
             } else {
-                String lastVisitUrl = setSessionReturnLastVisitUrl(sessionUser, null);
-                loginResponse.addExtra("url", lastVisitUrl);
-                NotePressSessionUtils.setSessionUser(sessionUser, null);
-                long cnt = SESSION_MAPPER.selectCount(BaseQuery.build("session_user_id", sessionUser.getId()));
-                if (cnt == 0) {
-                    SESSION_MAPPER.insert(SysSession.user(sessionUser));
-                }
+                loginResponse = NotePressResult.createErrorMsg("非法登录！");
             }
         } else {
-            loginResponse = NotePressResult.createErrorMsg(loginResult.getMsg());
+            String lastVisitUrl = setSessionReturnLastVisitUrl(sessionUser, null);
+            loginResponse.addExtra("url", lastVisitUrl);
+            NotePressSessionUtils.setSessionUser(sessionUser, null);
+            long cnt = SESSION_MAPPER.selectCount(BaseQuery.build("session_user_id", sessionUser.getId()));
+            if (cnt == 0) {
+                SESSION_MAPPER.insert(SysSession.user(sessionUser));
+            }
         }
+
         return loginResponse;
     }
 

@@ -94,6 +94,7 @@ public interface ParamKeyConstant {
     String SWITCH_VISIT_LOG = "switch_visit_log";
     String SWITCH_QQ_LOGIN = "switch_qq_login";
     String SWITCH_GITHUB_LOGIN = "switch_github_login";
+    String SWITCH_GITEE_LOGIN = "switch_gitee_login";
     String SWITCH_HOMEPAGE_INDEX = "switch_homepage_index";
 
     /**

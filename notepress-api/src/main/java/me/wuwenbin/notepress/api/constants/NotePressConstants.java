@@ -28,4 +28,15 @@ public interface NotePressConstants {
     String SESSION_LAST_VISIT_URL_KEY = "session_last_visit_url_key";
 
 
+    /**
+     * 开启
+     */
+    String OPEN = "1";
+
+    /**
+     * 侧边栏：左侧布局还是右侧布局
+     */
+    String PAGE_STYLE_LEFT = "-1";
+    String PAGE_STYLE_RIGHT = "1";
+
 }

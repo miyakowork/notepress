@@ -7,6 +7,9 @@ import me.wuwenbin.notepress.api.model.entity.system.SysNotice;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
 import me.wuwenbin.notepress.api.service.base.INotePressService;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author wuwen
  */
@@ -52,4 +55,11 @@ public interface ISysNoticeService extends INotePressService<SysNotice> {
      * @return
      */
     NotePressResult findMessagePage(Page<SysNotice> messagePage, String contentId, String pageType);
+
+    /**
+     * 文章评论数量
+     * @param contentIds
+     * @return
+     */
+    Map<String, Integer> contentNoticeCnt(List<String> contentIds);
 }

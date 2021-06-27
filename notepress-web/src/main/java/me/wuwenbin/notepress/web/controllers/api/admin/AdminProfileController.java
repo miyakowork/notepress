@@ -36,44 +36,43 @@ public class AdminProfileController extends NotePressBaseController {
     @PostMapping("/update")
     public NotePressResult updateAdminProfile(@NotNull SysUser user, String oldPass, String alipay, String wechatPay) {
         SysUser sessionUser = NotePressSessionUtils.getSessionUser();
-        if (sessionUser != null) {
-
-            if (StrUtil.isEmpty(oldPass)) {
-                return writeJsonErrorMsg("旧密码不能为空！");
-            }
-
-            if (StrUtil.isNotEmpty(user.getPassword())) {
-                user.setPassword(SecureUtil.md5(user.getPassword()));
-                if (!SecureUtil.md5(oldPass).equals(sessionUser.getPassword())) {
-                    return writeJsonErrorMsg("旧密码错误！");
-                }
-            }
-
-            user.setId(sessionUser.getId());
-            user.setGmtUpdate(LocalDateTime.now());
-            boolean res = sysUserService.updateById(user);
-            if (res) {
-                if (StrUtil.isNotEmpty(user.getNickname())) {
-                    paramService.update(ParamQuery.buildUpdate(ParamKeyConstant.ADMIN_GLOBAL_NICKNAME, user.getNickname()));
-                }
-                if (StrUtil.isNotEmpty(user.getAvatar())) {
-                    paramService.update(ParamQuery.buildUpdate(ParamKeyConstant.ADMIN_GLOBAL_AVATAR, user.getAvatar()));
-                }
-                if (StrUtil.isNotEmpty(alipay)) {
-                    boolean r1 = paramService.update(ParamQuery.buildUpdate(ParamKeyConstant.ADMIN_QRCODE_ALIPAY, alipay));
-                    ifTrueDo(r1, NotePressCacheUtils::remove, ParamKeyConstant.ADMIN_QRCODE_ALIPAY);
-                }
-                if (StrUtil.isNotEmpty(wechatPay)) {
-                    boolean r2 = paramService.update(ParamQuery.buildUpdate(ParamKeyConstant.ADMIN_QRCODE_WECHAT, wechatPay));
-                    ifTrueDo(r2, NotePressCacheUtils::remove, ParamKeyConstant.ADMIN_QRCODE_WECHAT);
-                }
-                NotePressSessionUtils.invalidSessionUser();
-                return writeJsonOkMsg("修改成功，请重新登录！");
-            }
-            return writeJsonErrorMsg("修改失败，未成功修改任何信息！");
-        } else {
+        if (sessionUser == null) {
             return writeJsonErrorMsg("非正常请求或请求出现异常！");
         }
+
+        if (StrUtil.isEmpty(oldPass)) {
+            return writeJsonErrorMsg("旧密码不能为空！");
+        }
+
+        if (StrUtil.isNotEmpty(user.getPassword())) {
+            user.setPassword(SecureUtil.md5(user.getPassword()));
+            if (!SecureUtil.md5(oldPass).equals(sessionUser.getPassword())) {
+                return writeJsonErrorMsg("旧密码错误！");
+            }
+        }
+
+        user.setId(sessionUser.getId());
+        user.setGmtUpdate(LocalDateTime.now());
+        boolean res = sysUserService.updateById(user);
+        if (res) {
+            if (StrUtil.isNotEmpty(user.getNickname())) {
+                paramService.update(ParamQuery.buildUpdate(ParamKeyConstant.ADMIN_GLOBAL_NICKNAME, user.getNickname()));
+            }
+            if (StrUtil.isNotEmpty(user.getAvatar())) {
+                paramService.update(ParamQuery.buildUpdate(ParamKeyConstant.ADMIN_GLOBAL_AVATAR, user.getAvatar()));
+            }
+            if (StrUtil.isNotEmpty(alipay)) {
+                boolean r1 = paramService.update(ParamQuery.buildUpdate(ParamKeyConstant.ADMIN_QRCODE_ALIPAY, alipay));
+                ifTrueDo(r1, NotePressCacheUtils::remove, ParamKeyConstant.ADMIN_QRCODE_ALIPAY);
+            }
+            if (StrUtil.isNotEmpty(wechatPay)) {
+                boolean r2 = paramService.update(ParamQuery.buildUpdate(ParamKeyConstant.ADMIN_QRCODE_WECHAT, wechatPay));
+                ifTrueDo(r2, NotePressCacheUtils::remove, ParamKeyConstant.ADMIN_QRCODE_WECHAT);
+            }
+            NotePressSessionUtils.invalidSessionUser();
+            return writeJsonOkMsg("修改成功，请重新登录！");
+        }
+        return writeJsonErrorMsg("修改失败，未成功修改任何信息！");
     }
 
     @GetMapping("/payInfo")

@@ -34,13 +34,13 @@ public class IndexMenu implements Serializable {
             "system,oauth,第三方登录设置,system/oauth",
             "settings,info,个人资料,settings/info",
             "settings,website,偏好设置,settings/website",
-            "settings,wxpay,微信付款码管理,settings/wxpay",
+//            "settings,wxpay,微信付款码管理,settings/wxpay",
             "settings,server,其他服务设置,settings/server",
             "contents,dict,字典管理,contents/dict",
             "contents,notice,消息中心,contents/notice",
             "contents,category,分类管理,contents/category",
-            "contents,rescate,资源分类管理,contents/rescate",
-            "contents,res,资源管理,contents/res",
+//            "contents,rescate,资源分类管理,contents/rescate",
+//            "contents,res,资源管理,contents/res",
             "contents,content,内容管理,contents/content",
     };
     private String name;

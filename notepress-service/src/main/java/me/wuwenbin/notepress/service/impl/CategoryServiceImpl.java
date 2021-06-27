@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Category;
+import me.wuwenbin.notepress.api.model.entity.Refer;
 import me.wuwenbin.notepress.api.model.layui.query.LayuiTableQuery;
 import me.wuwenbin.notepress.api.query.ReferQuery;
 import me.wuwenbin.notepress.api.service.ICategoryService;
@@ -14,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -34,10 +37,18 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         return findLayuiTableList(categoryMapper, categoryPage, layuiTableQuery);
     }
 
+
     @Override
-    public NotePressResult findCategoryListByContentId(String contentId) {
-        List<Category> categories = referMapper.selectList(ReferQuery.buildBySelfIdAndType(contentId, ReferTypeEnum.CONTENT_CATEGORY))
-                .stream().map(refer -> categoryMapper.selectById(refer.getReferId())).collect(Collectors.toList());
-        return NotePressResult.createOkData(categories);
+    public Map<String, List<Category>> findCategoryListByContentIds(List<String> contentIds) {
+        Map<String, List<Category>> result = new HashMap<>(contentIds.size());
+        for (String contentId : contentIds) {
+            List<String> cateIds = referMapper.selectList(ReferQuery.buildBySelfIdAndType(contentId, ReferTypeEnum.CONTENT_CATEGORY))
+                    .stream()
+                    .map(Refer::getReferId)
+                    .collect(Collectors.toList());
+            List<Category> categories = categoryMapper.selectBatchIds(cateIds);
+            result.put(contentId, categories);
+        }
+        return result;
     }
 }

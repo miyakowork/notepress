@@ -1,16 +1,25 @@
 package me.wuwenbin.notepress.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Dictionary;
+import me.wuwenbin.notepress.api.model.entity.Refer;
+import me.wuwenbin.notepress.api.query.DictionaryQuery;
+import me.wuwenbin.notepress.api.query.ReferQuery;
 import me.wuwenbin.notepress.api.service.IDictionaryService;
 import me.wuwenbin.notepress.service.mapper.DictionaryMapper;
+import me.wuwenbin.notepress.service.mapper.ReferMapper;
 import me.wuwenbin.notepress.service.utils.NotePressSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author wuwen
@@ -21,6 +30,8 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Diction
 
     @Autowired
     private DictionaryMapper dictionaryMapper;
+    @Autowired
+    private ReferMapper referMapper;
 
     /**
      * 更新字典信息
@@ -60,5 +71,18 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Diction
     @Override
     public NotePressResult top30TagList() {
         return NotePressResult.createOkData(dictionaryMapper.topTagList(30, null));
+    }
+
+
+    @Override
+    public Map<String, List<Dictionary>> contentDictionary(List<String> contentIds) {
+        Map<String, List<Dictionary>> result = new HashMap<>(contentIds.size());
+        for (String contentId : contentIds) {
+            List<String> tagIdList = referMapper.selectList(ReferQuery.buildBySelfIdAndType(contentId, ReferTypeEnum.CONTENT_TAG))
+                    .stream()
+                    .map(Refer::getReferId).collect(Collectors.toList());
+            result.put(contentId, dictionaryMapper.selectList(DictionaryQuery.buildByIdCollection(tagIdList)));
+        }
+        return result;
     }
 }

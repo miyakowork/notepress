@@ -13,7 +13,7 @@ public class NotePressServerUtils {
      * NotePress版本
      */
     public static String version() {
-        return "v1.3-210618";
+        return "v1.4.1";
     }
 
     /**

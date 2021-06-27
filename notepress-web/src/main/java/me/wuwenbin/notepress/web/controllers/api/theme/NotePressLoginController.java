@@ -106,6 +106,7 @@ public class NotePressLoginController extends NotePressBaseController {
         ModelAndView mav = new ModelAndView("login");
         mav.addObject("isOpenQqLogin", isOpenOauth("qq"));
         mav.addObject("isOpenGithubLogin", isOpenOauth("github"));
+        mav.addObject("isOpenGiteeLogin", isOpenOauth("gitee"));
         mav.addObject("isOpenRegister", isOpenRegister());
         return mav;
     }
@@ -244,57 +245,60 @@ public class NotePressLoginController extends NotePressBaseController {
     public void doThirdLogin(@PathVariable String type, AuthCallback callback, HttpServletResponse httpResponse) throws IOException {
         //请求登录结果
         NotePressResult authRequestResult = oauthService.getAuthRequest(type);
-        if (authRequestResult.isSuccess()) {
-            AuthRequest authRequest = authRequestResult.getDataBean(AuthRequest.class);
-            //返回登录结果
-            //noinspection rawtypes
-            AuthResponse response = authRequest.login(callback);
-            if (response.ok()) {
-                AuthUser authUser = (AuthUser) response.getData();
-                //检测是否绑定了本站账号
-                NotePressResult br = referService.hasBind(authUser.getSource(), authUser.getUuid());
-                if (br.isSuccess()) {
-                    //绑定了就直接登录，设置相关 session 对象
-                    if (br.getData() != null && !br.getBoolData()) {
-                        Refer referUser = br.getDataBean(Refer.class);
-                        String userId = referUser.getReferId();
-                        //根据用户 id 查询本站的账号信息，并设置相关 session
-                        SysUser sessionUser = sysUserService.getById(userId);
-                        String lastVisitUrl = setSessionReturnLastVisitUrl(sessionUser, null);
-                        lastVisitUrl = StrUtil.isEmpty(lastVisitUrl) ? Base64Encoder.encode("/") : lastVisitUrl;
-                        long cnt = SESSION_MAPPER.selectCount(BaseQuery.build("session_user_id", sessionUser.getId()));
-                        if (cnt == 0) {
-                            SESSION_MAPPER.insert(SysSession.user(sessionUser));
-                        }
-                        removeSessionLastVisitUrl();
-                        httpResponse.sendRedirect(lastVisitUrl);
-                    }
-                    //如果没绑定，提示绑定并转发至绑定页面
-                    else {
-                        String avatar = authUser.getAvatar();
-                        String source = authUser.getSource();
-                        String uuid = authUser.getUuid();
-                        String nickname = authUser.getNickname();
-                        String email = authUser.getEmail();
-                        String username = authUser.getUsername();
-                        log.info("==> 授权用户：{}", JSONUtil.toJsonPrettyStr(authUser));
-                        Map<String, Object> pMap = new HashMap<>(3);
-                        pMap.put("avatar", avatar);
-                        pMap.put("source", source);
-                        pMap.put("uuid", uuid);
-                        pMap.put("nickname", nickname);
-                        pMap.put("email", email);
-                        pMap.put("username", username);
-                        httpResponse.sendRedirect("/np-bind?p=" + Base64.encode(JSONUtil.toJsonStr(pMap)));
-                    }
-                } else {
-                    throw new NotePressException(br.getMsg());
-                }
-            } else {
-                throw new NotePressException(response.getMsg());
-            }
-        } else {
+        //登录失败，抛出错误
+        if (!authRequestResult.isSuccess()) {
             throw new NotePressException(authRequestResult.getMsg());
+        }
+
+        AuthRequest authRequest = authRequestResult.getDataBean(AuthRequest.class);
+        //返回登录结果
+        //noinspection rawtypes
+        AuthResponse response = authRequest.login(callback);
+        //授权失败，抛出错误
+        if (!response.ok()) {
+            throw new NotePressException(response.getMsg());
+        }
+
+        AuthUser authUser = (AuthUser) response.getData();
+        //检测是否绑定了本站账号
+        NotePressResult br = referService.hasBind(authUser.getSource(), authUser.getUuid());
+        //么有板顶或绑定错误，抛出错误
+        if (!br.isSuccess()) {
+            throw new NotePressException(br.getMsg());
+        }
+
+        //绑定了就直接登录，设置相关 session 对象
+        if (br.getData() != null && !br.getBoolData()) {
+            Refer referUser = br.getDataBean(Refer.class);
+            String userId = referUser.getReferId();
+            //根据用户 id 查询本站的账号信息，并设置相关 session
+            SysUser sessionUser = sysUserService.getById(userId);
+            String lastVisitUrl = setSessionReturnLastVisitUrl(sessionUser, null);
+            lastVisitUrl = StrUtil.isEmpty(lastVisitUrl) ? Base64Encoder.encode("/") : lastVisitUrl;
+            long cnt = SESSION_MAPPER.selectCount(BaseQuery.build("session_user_id", sessionUser.getId()));
+            if (cnt == 0) {
+                SESSION_MAPPER.insert(SysSession.user(sessionUser));
+            }
+            removeSessionLastVisitUrl();
+            httpResponse.sendRedirect(lastVisitUrl);
+        }
+        //如果没绑定，提示绑定并转发至绑定页面
+        else {
+            String avatar = authUser.getAvatar();
+            String source = authUser.getSource();
+            String uuid = authUser.getUuid();
+            String nickname = authUser.getNickname();
+            String email = authUser.getEmail();
+            String username = authUser.getUsername();
+            log.info("==> 授权用户：{}", JSONUtil.toJsonPrettyStr(authUser));
+            Map<String, Object> pMap = new HashMap<>(3);
+            pMap.put("avatar", avatar);
+            pMap.put("source", source);
+            pMap.put("uuid", uuid);
+            pMap.put("nickname", nickname);
+            pMap.put("email", email);
+            pMap.put("username", username);
+            httpResponse.sendRedirect("/np-bind?p=" + Base64.encode(JSONUtil.toJsonStr(pMap)));
         }
     }
 
@@ -330,27 +334,28 @@ public class NotePressLoginController extends NotePressBaseController {
         NotePressResult notePressResult = sysUserService.doReg(reqUser);
         if (!notePressResult.isSuccess()) {
             return notePressResult;
-        } else {
-            //能到绑定页面的说明都是没有注册过的
-            //检测用户名和密码是否正确
-            NotePressResult loginResult = sysUserService.doLogin(username, password, NotePressIpUtils.getRemoteAddress(request));
-            if (!loginResult.isSuccess()) {
-                return loginResult;
-            }
-            Long userId = loginResult.getDataBean(SysUser.class).getId();
-            //开始执行绑定
-            NotePressResult isSavedR = referService.bind(userId, uuid, source, HtmlUtil.unescape(HtmlUtil.unescape(avatar)));
-            if (!isSavedR.isSuccess()) {
-                return NotePressResult.createErrorFormatMsg("绑定失败：{}", isSavedR.getMsg());
-            } else {
-                //绑定成功跳转至登录前的最后访问的页面
-                Object lastVisitUrl = session.getAttribute(SESSION_LAST_VISIT_URL_KEY);
-                removeSessionLastVisitUrl();
-                return NotePressResult.createOkMsg("绑定成功")
-                        .addExtra("url",
-                                URLUtil.decode(ObjectUtil.isNotEmpty(lastVisitUrl) ? URLUtil.decode(Base64Decoder.decodeStr(lastVisitUrl.toString())) : "/"));
-            }
         }
+
+        //能到绑定页面的说明都是没有注册过的
+        //检测用户名和密码是否正确
+        NotePressResult loginResult = sysUserService.doLogin(username, password, NotePressIpUtils.getRemoteAddress(request));
+        if (!loginResult.isSuccess()) {
+            return loginResult;
+        }
+        Long userId = loginResult.getDataBean(SysUser.class).getId();
+        //开始执行绑定
+        NotePressResult isSavedR = referService.bind(userId, uuid, source, HtmlUtil.unescape(HtmlUtil.unescape(avatar)));
+        if (!isSavedR.isSuccess()) {
+            return NotePressResult.createErrorFormatMsg("绑定失败：{}", isSavedR.getMsg());
+        } else {
+            //绑定成功跳转至登录前的最后访问的页面
+            Object lastVisitUrl = session.getAttribute(SESSION_LAST_VISIT_URL_KEY);
+            removeSessionLastVisitUrl();
+            return NotePressResult.createOkMsg("绑定成功")
+                    .addExtra("url",
+                            URLUtil.decode(ObjectUtil.isNotEmpty(lastVisitUrl) ? URLUtil.decode(Base64Decoder.decodeStr(lastVisitUrl.toString())) : "/"));
+        }
+
     }
 
 
@@ -386,6 +391,10 @@ public class NotePressLoginController extends NotePressBaseController {
                 Param githubParam = paramService.getOne(ParamQuery.build(ParamKeyConstant.SWITCH_GITHUB_LOGIN));
                 log.info("==> github login open status:" + JSONUtil.toJsonStr(githubParam));
                 return githubParam != null && "1".contentEquals(githubParam.getValue());
+            } else if ("gitee".contentEquals(type)) {
+                Param giteeParam = paramService.getOne(ParamQuery.build(ParamKeyConstant.SWITCH_GITEE_LOGIN));
+                log.info("==> gitee login open status:" + JSONUtil.toJsonStr(giteeParam));
+                return giteeParam != null && "1".contentEquals(giteeParam.getValue());
             }
         }
         return false;

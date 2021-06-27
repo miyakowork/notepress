@@ -22,6 +22,7 @@ import me.wuwenbin.notepress.api.service.*;
 import me.wuwenbin.notepress.api.service.plugin.pay.IWxpayQrCodeService;
 import me.wuwenbin.notepress.service.utils.NotePressSessionUtils;
 import me.wuwenbin.notepress.web.controllers.api.NotePressBaseController;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,6 +76,8 @@ public class NotePressUbsController extends NotePressBaseController {
         model.addAttribute("commentCnt", commentCnt);
         int purchaseCnt = referService.count(ReferQuery.buildBySelfIdAndType(NotePressSessionUtils.getSessionUser().getId().toString(), ReferTypeEnum.USER_RES));
         model.addAttribute("purchaseCnt", purchaseCnt);
+        Param domainParam = toBeanNull(paramService.fetchParamByName(ParamKeyConstant.RECHARGE_SERVER_DOMAIN), Param.class);
+        model.addAttribute("isOpenCharge", domainParam != null && StringUtils.isNotEmpty(domainParam.getValue()));
         SysUser sessionUser = NotePressSessionUtils.getFrontSessionUser();
         Set<String> contentIds = dealService.list(BaseQuery.build("user_id", sessionUser.getId()))
                 .stream()

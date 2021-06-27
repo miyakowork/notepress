@@ -13,7 +13,6 @@ import me.wuwenbin.notepress.api.model.entity.*;
 import me.wuwenbin.notepress.api.model.query.ContentPageQuery;
 import me.wuwenbin.notepress.api.query.DictionaryQuery;
 import me.wuwenbin.notepress.api.query.ReferQuery;
-import me.wuwenbin.notepress.api.query.SysNoticeQuery;
 import me.wuwenbin.notepress.api.service.*;
 import me.wuwenbin.notepress.web.controllers.api.NotePressBaseController;
 import org.springframework.beans.BeanUtils;
@@ -25,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toMap;
 
 /**
  * @author wuwenbin
@@ -293,14 +290,8 @@ public class DefThemeController extends NotePressBaseController {
     private Map<String, List<Category>> contentCategoryList(Page<Content> page) {
         Page<Content> pageParam = new Page<>();
         BeanUtils.copyProperties(page, pageParam);
-        return pageParam.getRecords().stream().collect(
-                toMap(
-                        Content::getId,
-                        content -> {
-                            List<Category> cl = toListBeanNull(categoryService.findCategoryListByContentId(content.getId()));
-                            return Objects.requireNonNull(cl);
-                        }
-                ));
+        List<String> contentIds = pageParam.getRecords().stream().map(Content::getId).collect(Collectors.toList());
+        return categoryService.findCategoryListByContentIds(contentIds);
     }
 
     /**
@@ -312,11 +303,8 @@ public class DefThemeController extends NotePressBaseController {
     private Map<String, Integer> contentCommentCnt(Page<Content> page) {
         Page<Content> pageParam = new Page<>();
         BeanUtils.copyProperties(page, pageParam);
-        return pageParam.getRecords().stream().collect(
-                toMap(
-                        Content::getId,
-                        content -> noticeService.count(SysNoticeQuery.buildNotEmpty("content_id", content.getId()))
-                ));
+        List<String> contentIds = pageParam.getRecords().stream().map(Content::getId).collect(Collectors.toList());
+        return noticeService.contentNoticeCnt(contentIds);
     }
 
 
@@ -329,15 +317,8 @@ public class DefThemeController extends NotePressBaseController {
     private Map<String, List<Dictionary>> contentTagListPurchase(Page<Content> page) {
         Page<Content> pageParam = new Page<>();
         BeanUtils.copyProperties(page, pageParam);
-        return pageParam.getRecords().stream().collect(
-                toMap(
-                        Content::getId,
-                        content -> {
-                            List<String> tagIdList = referService.list(ReferQuery.buildBySelfIdAndType(content.getId(), ReferTypeEnum.CONTENT_TAG))
-                                    .stream().map(Refer::getReferId).collect(Collectors.toList());
-                            return dictionaryService.list(DictionaryQuery.buildByIdCollection(tagIdList));
-                        }
-                ));
+        List<String> contentIds = pageParam.getRecords().stream().map(Content::getId).collect(Collectors.toList());
+        return dictionaryService.contentDictionary(contentIds);
     }
 
 

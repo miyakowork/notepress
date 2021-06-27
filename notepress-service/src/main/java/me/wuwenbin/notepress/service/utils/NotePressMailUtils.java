@@ -43,7 +43,11 @@ public class NotePressMailUtils {
             account.setFrom(from);
             account.setUser(user);
             account.setPass(pass);
-            MailUtil.send(account, targetMail, subject, content, isHtml);
+            try {
+                MailUtil.send(account, targetMail, subject, content, isHtml);
+            } catch (Exception e) {
+                throw new NotePressException("发送邮件失败！");
+            }
         } else {
             throw new NotePressException("未正确配置邮件服务器");
         }

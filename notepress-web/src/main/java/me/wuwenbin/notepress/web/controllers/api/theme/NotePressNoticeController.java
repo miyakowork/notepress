@@ -2,10 +2,12 @@ package me.wuwenbin.notepress.web.controllers.api.theme;
 
 
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.wuwenbin.notepress.api.constants.NotePressConstants;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
 import me.wuwenbin.notepress.api.model.entity.Content;
@@ -98,32 +100,26 @@ public class NotePressNoticeController extends NotePressBaseController {
     @ResponseBody
     public NotePressResult sub(@Valid SysNotice notice, BindingResult bindingResult) {
         String commentStatus = toRNull(paramService.fetchParamByName(SWITCH_COMMENT), Param.class, Param::getValue);
-        if ("1".equals(commentStatus)) {
-            if (!bindingResult.hasErrors()) {
-                NotePressResult subRes = noticeService.subMessage(notice);
-                if (subRes.isSuccess()) {
-                    String mailStatus = toRNull(paramService.fetchParamByName(SWITCH_COMMENT_NOTICE_MAIL), Param.class, Param::getValue);
-                    if ("1".equals(mailStatus)) {
-                        String sendContent = "------<br/>" +
-                                "<b>用户</b>：【<span style='color:red;'>{}</span>】 在 <b>{}</b>楼发表了内容：{}</br>" +
-                                "------</br>";
-                        sendContent = StrUtil.format(sendContent, userService.getById(notice.getUserId()).getUsername(), notice.getFloor(), notice.getCommentHtml());
-                        mailFacade.sendNotice(sendContent, basePath(request), notice.getContentId());
-                    }
-                    if (!StringUtils.isEmpty(notice.getReplyId())) {
-                        String email = userService.getById(notice.getReplyId()).getEmail();
-                        mailFacade.sendNotice2User(email, notice.getContentId(), basePath(request));
-                    }
-                    return writeJsonOkMsg("发表评论成功");
-                }
-                return writeJsonErrorMsg("发表评论失败，" + subRes.getMsg());
-            } else {
-                return writeJsonJsr303(bindingResult.getFieldErrors());
-            }
-        } else {
+        if (!NotePressConstants.OPEN.equals(commentStatus)) {
             return writeJsonErrorMsg("未开放评论！");
         }
+        if (bindingResult.hasErrors()) {
+            return writeJsonJsr303(bindingResult.getFieldErrors());
+        }
+        NotePressResult subRes = noticeService.subMessage(notice);
+        if (subRes.isSuccess()) {
+            String mailStatus = toRNull(paramService.fetchParamByName(SWITCH_COMMENT_NOTICE_MAIL), Param.class, Param::getValue);
+            if (NotePressConstants.OPEN.equals(mailStatus)) {
+                sendNoticeMail(notice);
+            }
+            if (!StringUtils.isEmpty(notice.getReplyId())) {
+                sendNoticeReplyMail(notice);
+            }
+            return writeJsonOkMsg("发表评论成功");
+        }
+        return writeJsonErrorMsg("发表评论失败，" + subRes.getMsg());
     }
+
 
     //========================私有方法=======================
 
@@ -143,4 +139,35 @@ public class NotePressNoticeController extends NotePressBaseController {
                 )
         );
     }
+
+    /**
+     * 发送邮件评论
+     *
+     * @param notice
+     */
+    private void sendNoticeMail(SysNotice notice) {
+        String sendContent = "------<br/>" +
+                "<b>用户</b>：【<span style='color:red;'>{}</span>】 在 <b>{}</b>楼发表了内容：{}</br>" +
+                "------</br>";
+        final String sendContent2 = StrUtil.format(sendContent, userService.getById(notice.getUserId()).getUsername(), notice.getFloor(), notice.getCommentHtml());
+        ThreadUtil.execAsync(() -> mailFacade.sendNotice(sendContent2, basePath(request), notice.getContentId()));
+    }
+
+    /**
+     * 回复评论邮件通知
+     *
+     * @param notice
+     */
+    private void sendNoticeReplyMail(SysNotice notice) {
+        SysNotice noticeServiceById = noticeService.getById(notice.getReplyId());
+        if (noticeServiceById != null) {
+            Long userId = noticeServiceById.getUserId();
+            String email = userService.getById(userId).getEmail();
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(email)) {
+                ThreadUtil.execAsync(() -> mailFacade.sendNotice2User(email, notice.getContentId(), basePath(request)));
+            }
+            sendNoticeMail(notice);
+        }
+    }
+
 }

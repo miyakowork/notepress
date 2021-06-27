@@ -9,7 +9,9 @@ import me.wuwenbin.notepress.api.constants.ParamKeyConstant;
 import me.wuwenbin.notepress.api.constants.enums.DictionaryTypeEnum;
 import me.wuwenbin.notepress.api.constants.enums.ReferTypeEnum;
 import me.wuwenbin.notepress.api.model.NotePressResult;
+import me.wuwenbin.notepress.api.model.entity.Dictionary;
 import me.wuwenbin.notepress.api.model.entity.*;
+import me.wuwenbin.notepress.api.model.entity.system.SysUser;
 import me.wuwenbin.notepress.api.model.query.ContentPageQuery;
 import me.wuwenbin.notepress.api.query.DictionaryQuery;
 import me.wuwenbin.notepress.api.query.ReferQuery;
@@ -25,10 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -294,10 +293,16 @@ public class NotePressPageController extends NotePressBaseController {
     private Map<String, String> contentAuthorNames(Page<Content> page) {
         Page<Content> pageParam = new Page<>();
         BeanUtils.copyProperties(page, pageParam);
+        List<Long> contentIds = pageParam.getRecords().stream().map(Content::getAuthorId).collect(Collectors.toList());
+        Set<SysUser> sysUsers = new HashSet<>(userService.listByIds(contentIds));
         return pageParam.getRecords().stream().collect(
                 toMap(
                         Content::getId,
-                        content -> userService.getById(content.getAuthorId()).getNickname()
+                        content -> sysUsers.stream()
+                                .filter(sysUser -> content.getAuthorId().equals(sysUser.getId()))
+                                .findFirst()
+                                .orElse(SysUser.builder().nickname("-").build())
+                                .getNickname()
                 ));
     }
 
@@ -310,14 +315,8 @@ public class NotePressPageController extends NotePressBaseController {
     private Map<String, List<Category>> contentCategoryList(Page<Content> page) {
         Page<Content> pageParam = new Page<>();
         BeanUtils.copyProperties(page, pageParam);
-        return pageParam.getRecords().stream().collect(
-                toMap(
-                        Content::getId,
-                        content -> {
-                            List<Category> cl = toListBeanNull(categoryService.findCategoryListByContentId(content.getId()));
-                            return Objects.requireNonNull(cl);
-                        }
-                ));
+        List<String> contentIds = pageParam.getRecords().stream().map(Content::getId).collect(Collectors.toList());
+        return categoryService.findCategoryListByContentIds(contentIds);
     }
 
     /**
@@ -329,11 +328,8 @@ public class NotePressPageController extends NotePressBaseController {
     private Map<String, Integer> contentCommentCnt(Page<Content> page) {
         Page<Content> pageParam = new Page<>();
         BeanUtils.copyProperties(page, pageParam);
-        return pageParam.getRecords().stream().collect(
-                toMap(
-                        Content::getId,
-                        content -> noticeService.count(SysNoticeQuery.buildNotEmpty("content_id", content.getId()))
-                ));
+        List<String> contentIds = pageParam.getRecords().stream().map(Content::getId).collect(Collectors.toList());
+        return noticeService.contentNoticeCnt(contentIds);
     }
 
     /**
@@ -345,15 +341,8 @@ public class NotePressPageController extends NotePressBaseController {
     private Map<String, List<Dictionary>> contentTagList(Page<Content> page) {
         Page<Content> pageParam = new Page<>();
         BeanUtils.copyProperties(page, pageParam);
-        return pageParam.getRecords().stream().collect(
-                toMap(
-                        Content::getId,
-                        content -> {
-                            List<String> tagIdList = referService.list(ReferQuery.buildBySelfIdAndType(content.getId(), ReferTypeEnum.CONTENT_TAG))
-                                    .stream().map(Refer::getReferId).collect(Collectors.toList());
-                            return dictionaryService.list(DictionaryQuery.buildByIdCollection(tagIdList));
-                        }
-                ));
+        List<String> contentIds = pageParam.getRecords().stream().map(Content::getId).collect(Collectors.toList());
+        return dictionaryService.contentDictionary(contentIds);
     }
 
 }

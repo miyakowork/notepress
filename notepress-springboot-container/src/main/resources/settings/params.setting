@@ -65,5 +65,6 @@ switch_user_reg = 是否开放用户注册,0
 switch_visit_log = 是否开启访问统计,0
 switch_qq_login = 是否开启第三方QQ登录,0
 switch_github_login = 是否开启第三方Github登录,0
+switch_gitee_login = 是否开启第三方Gitee登录,0
 switch_recharge_server = 是否开启自动充值服务,0
 switch_homepage_index = 是否直接进入index首页而不是卡片欢迎页,0
